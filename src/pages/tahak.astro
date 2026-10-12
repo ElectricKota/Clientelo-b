@@ -81,6 +81,13 @@ const pages = 8;
         color: #4a5b57;
         font-size: 8.5pt;
       }
+      .compact th,
+      .compact td {
+        padding: 1.2mm 1.5mm;
+      }
+      .compact th {
+        font-size: 7.5pt;
+      }
       h2 {
         font-size: 24pt;
         line-height: 1.1;
@@ -146,24 +153,23 @@ const pages = 8;
         <section class="page">
           <p class="eyebrow">Převodník NYSE → Evropa {i === 0 ? '' : '(pokračování)'}</p>
           <h2 class="mt-2">{i === 0 ? 'Co koupit místo amerického ETF' : 'Svět, dividendy, zlato'}</h2>
-          <div class="mt-6 space-y-5">
+          <div class="mt-5 space-y-3">
             {chunk.map((e) => (
-              <div class="rounded-xl border border-line bg-white p-4">
+              <div class="rounded-xl border border-line bg-white px-4 py-3">
                 <div class="flex items-baseline justify-between gap-4">
                   <p>
-                    <span class="font-serif text-[17pt] text-pine">{e.ticker}</span>{' '}
+                    <span class="font-serif text-[15pt] text-pine">{e.ticker}</span>{' '}
                     <span class="text-ink-soft">{e.name}</span>
                   </p>
                   <p class="shrink-0 text-ink-soft">
                     TER {fmt.ter(e.ter)} · {categories.find((c) => c.id === e.category)?.label}
                   </p>
                 </div>
-                <table class="mt-2 text-[9pt]">
+                <table class="compact mt-1 text-[8pt] leading-snug">
                   <thead>
                     <tr>
                       <th>UCITS obdoba</th>
                       <th>ISIN</th>
-                      <th>Burza</th>
                       <th>TER</th>
                       <th>Třída</th>
                     </tr>
@@ -172,11 +178,13 @@ const pages = 8;
                     {e.ucits.map((u) => (
                       <tr>
                         <td>
-                          <strong>{u.ticker}</strong> {u.name}
-                          {!u.exactMatch && <span class="block text-ink-soft">Nejbližší obdoba. {u.note}</span>}
+                          <strong>{u.ticker}</strong>
+                          <span class="block text-ink-soft">
+                            {u.exactMatch ? '' : 'Nejbližší obdoba. '}
+                            {u.note}
+                          </span>
                         </td>
                         <td class="font-mono text-[8.5pt]">{u.isin}</td>
-                        <td>{u.exchange}</td>
                         <td>{fmt.ter(u.ter)}</td>
                         <td>{policy(u.policy)}</td>
                       </tr>

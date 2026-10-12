@@ -11,7 +11,7 @@ const issuerHost = (url: string) => new URL(url).hostname.replace(/^www\./, '');
 
 <style is:inline set:html={filterCss}></style>
 
-<section id="porovnani" data-section="compare" aria-labelledby="compare-title" class="defer-render scroll-mt-4 bg-sand/60 py-16 sm:py-24">
+<section id="porovnani" data-section="compare" aria-labelledby="compare-title" class="scroll-mt-4 bg-sand/60 py-16 sm:py-24">
   <div class="container-page etf-compare">
     <div class="max-w-3xl">
       <p class="eyebrow">Porovnání fondů</p>
@@ -112,7 +112,7 @@ const issuerHost = (url: string) => new URL(url).hostname.replace(/^www\./, '');
                 </a>
                 <p class="mt-2 text-xs text-ink-soft">
                   Zdroj:{' '}
-                  <a href={e.sourceUrl} class="underline underline-offset-2" rel="noopener" target="_blank">
+                  <a href={e.sourceUrl} class="inline-flex min-h-6 items-center underline underline-offset-2" rel="noopener" target="_blank">
                     {issuerHost(e.sourceUrl)}
                     <span class="sr-only"> (otevře se v novém okně)</span>
                   </a>

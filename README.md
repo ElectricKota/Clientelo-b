@@ -99,7 +99,7 @@ Studený placený provoz z Meta na mobilu, lead magnet zdarma z oblasti financí
 | → **odeslání formuláře (`generate_lead`)** | **8–12 %**, plánovací hodnota **9 %** |
 | → potvrzení double opt-in | 70–80 % leadů |
 
-Zdůvodnění: medián konverze landing pages napříč obory se pohybuje kolem 6 % a lead magnety zdarma s jedním polem mají výrazně vyšší konverzi než formuláře s více poli. Finance mají kvůli nedůvěře konverzi spíš nižší, mobilní provoz z reklamy také. Interaktivní prvek a jediné pole to kompenzují. Po prvních ~500 návštěvách se odhad nahradí skutečnými daty z funnelu.
+Zdůvodnění: medián konverze landing pages napříč obory je podle Unbounce Conversion Benchmark Report kolem 6–7 % a lead magnety zdarma s jedním polem mají výrazně vyšší konverzi než formuláře s více poli. Finance mají kvůli nedůvěře konverzi spíš nižší, mobilní provoz z reklamy také. Interaktivní prvek a jediné pole to kompenzují. Po prvních ~500 návštěvách se odhad nahradí skutečnými daty z funnelu.
 
 ---
 
@@ -117,7 +117,25 @@ Technicky jde o další statickou variantu stránky (`data-variant`). Rozdělen�
 
 Data jsou v [`src/data/etfs.json`](src/data/etfs.json). Ke každému fondu je uvedený zdroj (`sourceUrl`) a datum (`asOf`), na stránce jsou zdroje vidět u karet i v patičce.
 
-DATA_SOURCES_PLACEHOLDER
+| Co | Zdroj |
+|---|---|
+| SPY, SPYM (dříve SPLG), GLD | [ssga.com](https://www.ssga.com/us/en/intermediary/etfs) (State Street) |
+| IVV | [ishares.com](https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf) |
+| VOO, VTI, VT, VEA, VWO | [investor.vanguard.com](https://investor.vanguard.com/investment-products/etfs/profile/voo) |
+| SCHD | [schwabassetmanagement.com](https://www.schwabassetmanagement.com/products/schd) |
+| UCITS alternativy (TER, ISIN, velikost, třída) | [justETF](https://www.justetf.com/cz/) |
+| PRIIPs / KID | [justETF: US-domiciled ETFs](https://www.justetf.com/en/news/etf/us-domiciled-etfs.html), nařízení EU 1286/2014 |
+| W-8BEN, srážková daň 15 % | [finex.cz](https://finex.cz/w-8ben-formular/), IRS |
+| Irské fondy a srážka 15 % | [justETF Academy](https://www.justetf.com/en/academy/synthetic-etfs-in-us-dominated-markets.html) |
+| Časový test 3 roky, limit 100 000 Kč | [zákon č. 586/1992 Sb., § 4 odst. 1 písm. t) a u)](https://www.zakonyprolidi.cz/cs/1992-586) |
+| Zrušení stropu 40 mil. Kč od 2026 | [Finanční správa, Daňové novinky 2026](https://financnisprava.gov.cz/cs/financni-sprava/media-a-verejnost/tiskove-zpravy-gfr/tiskove-zpravy-2026/danove-novinky-pro-rok-2026) |
+
+- **Stav dat:** výnosy (NAV, průměrné roční celkové) k **30. 9. 2026**, TER podle prospektu, AUM k 30. 9.–9. 10. 2026, data stažena 12. 10. 2026.
+- Všech 10 ETF má primární kotaci na **NYSE Arca**. QQQ (Nasdaq) jsme proto vyřadili.
+- Vanguard u VT, VEA a VWO neuvádí SEC yield. Dividendový výnos je u nich náš odhad z vyplacených dividend za 12 měsíců, na stránce označený „≈“.
+- Přesná UCITS obdoba neexistuje pro VTI, SCHD a GLD (zlato v UCITS držet nejde, jde o ETC). VT, VEA a VWO mají jen blízké obdoby. Na stránce i v PDF je to u fondu uvedené.
+- Dostupnost jednotlivých fondů u konkrétních brokerů jsme neověřovali, proto ji stránka netvrdí a radí hledat podle ISIN.
+- Kompletní poznámky ke sběru dat jsou v poli `notes` v `etfs.json`.
 
 **Aktualizace:** jednou za čtvrtletí upravit `etfs.json` (TER, AUM, výnosy, `asOf`), spustit build a nasadit.
 
@@ -154,11 +172,15 @@ Všechny události jdou přes [`src/scripts/track.ts`](src/scripts/track.ts) do 
 
 ## 8. Technické řešení
 
+### Výsledky Lighthouse (mobil, lokální build bez komprese)
+
+Výkon 98 · Přístupnost 100 · Best practices 100 · SEO 100. LCP 2,1 s, CLS 0, TBT 0 ms, celkem 173 kB. Na Vercelu s kompresí Brotli bývají čísla lepší.
+
 ### Výkon
 - Statické HTML, CSS vložené přímo do stránky (~15 kB), JS jen pro kalkulačku, formulář a měření.
 - Filtr porovnání je čisté CSS (`:has()`), FAQ přes `<details>`, plynulý scroll přes CSS.
 - Fonty (Newsreader, Geist) jsou self-hosted přes Astro Fonts API s preloadem latin subsetu a metrickým fallbackem proti CLS.
-- `content-visibility: auto` pro sekce pod ohybem, hashovaná aktiva s `immutable` cache.
+- Hashovaná aktiva s `immutable` cache, serif ve statických řezech (~23 kB) a bez preloadu, aby neblokoval první vykreslení.
 - Žádné obrázky v hero; vizuály jsou HTML/CSS a inline SVG.
 
 ### Přístupnost (WCAG 2.2 AA)
@@ -193,6 +215,8 @@ npm install
 npm run dev        # http://localhost:4321, formulář funguje i lokálně
 npm run build      # výstup do ./public
 npm run preview
+npm run pdf        # (při běžícím dev serveru) vygeneruje static/etf-tahak-2026.pdf ze stránky /tahak
+npm run og         # (při běžícím dev serveru) vygeneruje og.png, apple-touch-icon.png, favicon.ico
 ```
 
 ### Proměnné prostředí (Vercel → Settings → Environment Variables)

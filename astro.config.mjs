@@ -23,7 +23,7 @@ export default defineConfig({
   devToolbar: { enabled: false },
   integrations: [
     sitemap({
-      filter: (page) => !/\/(dekujeme|voo)$/.test(page),
+      filter: (page) => !/\/(dekujeme|voo|og|tahak)$/.test(page),
     }),
     leadDevApi(),
   ],
@@ -32,7 +32,8 @@ export default defineConfig({
       provider: fontProviders.fontsource(),
       name: 'Newsreader',
       cssVariable: '--font-newsreader',
-      weights: ['400 700'],
+      // Statické řezy jsou výrazně menší než variabilní soubor s osou opsz.
+      weights: [400, 500, 600],
       styles: ['normal', 'italic'],
       subsets: ['latin', 'latin-ext'],
       fallbacks: ['Georgia', 'serif'],

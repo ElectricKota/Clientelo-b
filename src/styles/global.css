@@ -119,7 +119,7 @@
 }
 
 /* Sekce pod ohybem se vykreslí až při přiblížení (rychlejší první vykreslení). */
-.defer-render {
+.{
   content-visibility: auto;
   contain-intrinsic-size: auto 900px;
 }

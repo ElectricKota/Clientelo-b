@@ -2,7 +2,7 @@
 import { faq } from '../data/faq';
 ---
 
-<section data-section="faq" aria-labelledby="faq-title" class="defer-render bg-sand/60 py-16 sm:py-24">
+<section data-section="faq" aria-labelledby="faq-title" class="bg-sand/60 py-16 sm:py-24">
   <div class="container-page grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-16">
     <div>
       <p class="eyebrow">Časté otázky</p>
@@ -23,7 +23,7 @@ import { faq } from '../data/faq';
               {item.sources && (
                 <p class="mt-2 flex flex-wrap gap-x-4 text-sm">
                   {item.sources.map((url) => (
-                    <a href={url} class="link" rel="noopener" target="_blank">
+                    <a href={url} class="link inline-flex min-h-6 items-center" rel="noopener" target="_blank">
                       Zdroj: {new URL(url).hostname.replace(/^www\./, '')}
                       <span class="sr-only"> (otevře se v novém okně)</span>
                     </a>
