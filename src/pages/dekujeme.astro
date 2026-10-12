@@ -1,0 +1,131 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../site';
+import { etfs } from '../data/etfs';
+
+const shareUrl = new URL('/', Astro.site).href;
+const shareText = 'Tohle mi pomohlo: porovnání ETF z NYSE a co si z nich koupíte z Česka.';
+---
+
+<Base title={`Tahák je váš | ${site.brand}`} description="Děkujeme, ETF tahák si můžete stáhnout." noindex>
+  <section data-section="thanks" aria-labelledby="thanks-title" class="py-10 sm:py-20">
+    <div class="container-page max-w-3xl">
+      <p class="eyebrow">Hotovo</p>
+      <h1 id="thanks-title" class="mt-3 text-display font-medium">Tahák je váš.</h1>
+      <p class="mt-5 text-lg text-ink-soft sm:text-xl">
+        Stáhněte si ho rovnou tady. Odkaz vám posíláme i e-mailem, a pokud jste použili kalkulačku, najdete tam i svůj výpočet.
+      </p>
+
+      <a
+        href={site.pdfPath}
+        download
+        class="btn btn-primary mt-8 w-full sm:w-auto"
+        data-track="pdf_download"
+        data-placement="thanks"
+      >
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M10 3v10m0 0-4-4m4 4 4-4M4 16h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        Stáhnout ETF tahák (PDF, 8 stran)
+      </a>
+
+      <div data-calc-summary hidden class="card mt-10 p-6">
+        <h2 class="font-sans text-lg font-semibold">Váš výpočet</h2>
+        <p class="mt-2 text-ink-soft" data-calc-text></p>
+      </div>
+
+      <div class="mt-12">
+        <h2 class="text-2xl sm:text-3xl">Co teď?</h2>
+        <ol class="mt-6 space-y-6">
+          <li class="flex gap-4">
+            <span class="num grid size-9 shrink-0 place-items-center rounded-full bg-pine font-serif text-white" aria-hidden="true">1</span>
+            <div>
+              <h3 class="font-sans font-semibold">Potvrďte e-mail</h3>
+              <p class="text-ink-soft">
+                Během minuty vám přijde zpráva s potvrzovacím odkazem. Nevidíte ji? Podívejte se do složky Hromadné nebo Promo akce.
+              </p>
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <span class="num grid size-9 shrink-0 place-items-center rounded-full bg-pine font-serif text-white" aria-hidden="true">2</span>
+            <div>
+              <h3 class="font-sans font-semibold">Otevřete stranu 2: převodník NYSE → Evropa</h3>
+              <p class="text-ink-soft">Najděte fond, který vás zajímá ({etfs.slice(0, 3).map((e) => e.ticker).join(', ')}…), a zkopírujte ISIN jeho evropské obdoby.</p>
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <span class="num grid size-9 shrink-0 place-items-center rounded-full bg-pine font-serif text-white" aria-hidden="true">3</span>
+            <div>
+              <h3 class="font-sans font-semibold">Vyhledejte ho u svého brokera</h3>
+              <p class="text-ink-soft">Hledání podle ISIN je nejspolehlivější. V taháku najdete, na co si dát pozor u burzy a měny.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="mt-12 rounded-2xl bg-sand p-6">
+        <h2 class="font-sans text-lg font-semibold">Znáte někoho, kdo s ETF začíná?</h2>
+        <p class="mt-1 text-ink-soft">Pošlete mu odkaz, tahák dostane také zdarma.</p>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <button type="button" class="btn btn-secondary hidden min-h-11 px-5 text-sm" data-share>Sdílet odkaz</button>
+          <a
+            class="btn btn-secondary min-h-11 px-5 text-sm"
+            href={`https://wa.me/?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}`}
+            rel="noopener"
+            target="_blank"
+            data-track="share"
+            data-label="whatsapp">WhatsApp<span class="sr-only"> (otevře se v novém okně)</span></a
+          >
+          <a
+            class="btn btn-secondary min-h-11 px-5 text-sm"
+            href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
+            rel="noopener"
+            target="_blank"
+            data-track="share"
+            data-label="facebook">Facebook<span class="sr-only"> (otevře se v novém okně)</span></a
+          >
+        </div>
+      </div>
+
+      <p class="mt-10"><a href="/" class="link">← Zpět na porovnání ETF</a></p>
+    </div>
+  </section>
+</Base>
+
+<script define:vars={{ shareUrl, shareText }}>
+  window.__share = { url: shareUrl, text: shareText };
+</script>
+
+<script>
+  import { track } from '../scripts/track';
+
+  // Konverzi počítáme jen jednou a jen po skutečném odeslání formuláře (ne při ručním otevření URL).
+  try {
+    const lead = JSON.parse(sessionStorage.getItem('lead') ?? 'null');
+    if (lead && !sessionStorage.getItem('lead_tracked')) {
+      track('generate_lead', { placement: lead.placement });
+      sessionStorage.setItem('lead_tracked', '1');
+    }
+
+    const calc = JSON.parse(sessionStorage.getItem('calc') ?? 'null');
+    if (calc) {
+      const czk = (v: number) => `${new Intl.NumberFormat('cs-CZ').format(v)} Kč`;
+      const box = document.querySelector<HTMLElement>('[data-calc-summary]')!;
+      box.querySelector('[data-calc-text]')!.textContent =
+        `Při vkladu ${czk(calc.amount)} a ${czk(calc.monthly)} měsíčně za ${calc.years} let ušetří nejlevnější ETF oproti dražšímu fondu zhruba ${czk(calc.diff)} na poplatcích (modelový výpočet).`;
+      box.hidden = false;
+    }
+  } catch {}
+
+  const shareButton = document.querySelector<HTMLButtonElement>('[data-share]');
+  const share = (window as any).__share;
+  if (shareButton && navigator.share) {
+    shareButton.classList.remove('hidden');
+    shareButton.addEventListener('click', async () => {
+      try {
+        await navigator.share({ url: share.url, text: share.text });
+        track('share', { label: 'native' });
+      } catch {}
+    });
+  }
+</script>

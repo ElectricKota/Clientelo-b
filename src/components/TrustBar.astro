@@ -1,0 +1,17 @@
+---
+import { data, etfs, fmt } from '../data/etfs';
+
+const issuers = [...new Set(etfs.map((e) => e.issuer))];
+---
+
+<section data-section="trust" aria-label="Odkud data jsou" class="border-y border-line bg-surface/60">
+  <div class="container-page flex flex-col gap-3 py-5 text-sm sm:flex-row sm:items-center sm:justify-between">
+    <p class="text-ink-soft">
+      <span class="font-semibold text-ink">Data přímo od emitentů:</span>
+      {issuers.join(' · ')}
+    </p>
+    <p class="text-ink-soft">
+      Aktualizováno <time datetime={data.asOf} class="font-semibold text-ink">{fmt.date(data.asOf)}</time>, každé čtvrtletí
+    </p>
+  </div>
+</section>

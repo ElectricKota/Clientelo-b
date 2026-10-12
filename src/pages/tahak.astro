@@ -1,0 +1,344 @@
+---
+// Tisková předloha PDF taháku. PDF se generuje skriptem `npm run pdf` (headless Chrome) do static/.
+import { Font } from 'astro:assets';
+import '../styles/global.css';
+import { data, etfs, fmt, fact, feeCost, categories } from '../data/etfs';
+import { site } from '../site';
+
+const policy = (p: 'accumulating' | 'distributing' | 'none') => ({ accumulating: 'Acc', distributing: 'Dist', none: '–' })[p];
+const scenarios = [
+  { initial: 0, monthly: 2_000, years: 20 },
+  { initial: 100_000, monthly: 5_000, years: 20 },
+  { initial: 500_000, monthly: 10_000, years: 25 },
+];
+const funds = [
+  ...etfs.filter((e) => e.category === 'sp500').map((e) => ({ label: e.ticker, ter: e.ter })),
+  ...[...new Map(etfs.filter((e) => e.category === 'sp500').flatMap((e) => e.ucits).filter((u) => u.policy === 'accumulating').map((u) => [u.primary, u])).values()].map((u) => ({
+    label: `${u.primary} (UCITS)`,
+    ter: u.ter,
+  })),
+  { label: 'Fond s TER 1,5 %', ter: 1.5 },
+];
+const pages = 8;
+---
+
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8" />
+    <title>ETF tahák 2026</title>
+    <meta name="robots" content="noindex" />
+    <Font cssVariable="--font-geist" />
+    <Font cssVariable="--font-newsreader" />
+    <style is:global>
+      @page {
+        size: A4;
+        margin: 0;
+      }
+      html,
+      body {
+        background: #f7f4ee;
+        font-size: 10.5pt;
+        line-height: 1.5;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .page {
+        width: 210mm;
+        height: 297mm;
+        padding: 18mm 18mm 16mm;
+        position: relative;
+        overflow: hidden;
+        break-after: page;
+        display: flex;
+        flex-direction: column;
+      }
+      .page:last-child {
+        break-after: auto;
+      }
+      .foot {
+        margin-top: auto;
+        display: flex;
+        justify-content: space-between;
+        font-size: 8pt;
+        color: #4a5b57;
+        border-top: 1px solid #e0d9cc;
+        padding-top: 4mm;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 2.2mm 2mm;
+        border-bottom: 1px solid #e0d9cc;
+        vertical-align: top;
+      }
+      th {
+        font-weight: 500;
+        color: #4a5b57;
+        font-size: 8.5pt;
+      }
+      h2 {
+        font-size: 24pt;
+        line-height: 1.1;
+      }
+      h3 {
+        font-family: var(--font-sans);
+        font-weight: 600;
+        font-size: 11.5pt;
+        color: #10302b;
+      }
+    </style>
+  </head>
+  <body class="num">
+    <!-- 1: titulní strana -->
+    <section class="page bg-pine text-white">
+      <p class="text-sm font-semibold tracking-wide text-[#f4b393] uppercase">{site.brand} · data k {fmt.date(data.asOf)}</p>
+      <h1 class="mt-[40mm] font-serif text-[46pt] leading-[1.02] font-medium text-white">ETF tahák 2026</h1>
+      <p class="mt-6 max-w-[140mm] font-serif text-[18pt] leading-snug text-white/90">
+        {etfs.length} nejpopulárnějších ETF z NYSE a co si z nich jako investor z Česka opravdu koupíte.
+      </p>
+      <ol class="mt-[30mm] space-y-2 text-white/85">
+        <li>2 · Proč VOO u brokera nenajdete</li>
+        <li>3–4 · Převodník NYSE → Evropa</li>
+        <li>5 · Jak fond najít u brokera</li>
+        <li>6 · Kolik stojí poplatky</li>
+        <li>7 · Daně a 5 drahých chyb</li>
+        <li>8 · Zdroje a upozornění</li>
+      </ol>
+      <div class="foot border-white/20 text-white/70"><span>{site.brand}</span><span>1 / {pages}</span></div>
+    </section>
+
+    <!-- 2: PRIIPs -->
+    <section class="page">
+      <p class="eyebrow">Než začnete</p>
+      <h2 class="mt-2">Proč VOO u brokera nenajdete</h2>
+      <p class="mt-6 text-[12pt]">{fact('priips-kid').text_cs}</p>
+      <div class="mt-8 grid grid-cols-2 gap-6">
+        <div class="rounded-xl border border-line bg-white p-5">
+          <h3>ETF registrované v USA</h3>
+          <p class="mt-2 text-ink-soft">VOO, SPY, IVV, VT… Obchodují se na NYSE, mají americký prospekt, ale nemají evropský dokument KID. Drobný investor z EU je u brokera obvykle nekoupí.</p>
+        </div>
+        <div class="rounded-xl border-2 border-gain/40 bg-white p-5">
+          <h3>UCITS ETF (Irsko, Lucembursko)</h3>
+          <p class="mt-2 text-ink-soft">Sledují stejné indexy, splňují evropská pravidla a mají KID. Obchodují se v Londýně, Frankfurtu (Xetra) nebo Amsterdamu. Tohle si koupíte.</p>
+        </div>
+      </div>
+      <h3 class="mt-10">Jak číst tickery</h3>
+      <p class="mt-2 text-ink-soft">
+        Jeden UCITS fond mívá na různých burzách různé tickery (např. VUAA v Londýně, VUAA nebo jiný kód na Xetře). Jednoznačný je jen <strong class="text-ink">ISIN</strong>,
+        dvanáctimístný kód začínající zemí registrace (IE… = Irsko). Proto v převodníku uvádíme vždy ISIN.
+      </p>
+      <h3 class="mt-8">Akumulační (Acc) vs. distribuční (Dist)</h3>
+      <p class="mt-2 text-ink-soft">
+        Akumulační třída dividendy automaticky reinvestuje uvnitř fondu. Neplatíte z nich daň v ČR a nemusíte je znovu investovat. Distribuční třída dividendy vyplácí na
+        účet; ty pak podléhají dani z příjmu.
+      </p>
+      <div class="foot"><span>{site.brand} 2026</span><span>2 / {pages}</span></div>
+    </section>
+
+    <!-- 3–4: převodník -->
+    {
+      [etfs.slice(0, 5), etfs.slice(5)].map((chunk, i) => (
+        <section class="page">
+          <p class="eyebrow">Převodník NYSE → Evropa {i === 0 ? '' : '(pokračování)'}</p>
+          <h2 class="mt-2">{i === 0 ? 'Co koupit místo amerického ETF' : 'Svět, dividendy, zlato'}</h2>
+          <div class="mt-6 space-y-5">
+            {chunk.map((e) => (
+              <div class="rounded-xl border border-line bg-white p-4">
+                <div class="flex items-baseline justify-between gap-4">
+                  <p>
+                    <span class="font-serif text-[17pt] text-pine">{e.ticker}</span>{' '}
+                    <span class="text-ink-soft">{e.name}</span>
+                  </p>
+                  <p class="shrink-0 text-ink-soft">
+                    TER {fmt.ter(e.ter)} · {categories.find((c) => c.id === e.category)?.label}
+                  </p>
+                </div>
+                <table class="mt-2 text-[9pt]">
+                  <thead>
+                    <tr>
+                      <th>UCITS obdoba</th>
+                      <th>ISIN</th>
+                      <th>Burza</th>
+                      <th>TER</th>
+                      <th>Třída</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {e.ucits.map((u) => (
+                      <tr>
+                        <td>
+                          <strong>{u.ticker}</strong> {u.name}
+                          {!u.exactMatch && <span class="block text-ink-soft">Nejbližší obdoba. {u.note}</span>}
+                        </td>
+                        <td class="font-mono text-[8.5pt]">{u.isin}</td>
+                        <td>{u.exchange}</td>
+                        <td>{fmt.ter(u.ter)}</td>
+                        <td>{policy(u.policy)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ))}
+          </div>
+          <div class="foot">
+            <span>Data k {fmt.date(data.asOf)}, zdroje na straně 8</span>
+            <span>
+              {i + 3} / {pages}
+            </span>
+          </div>
+        </section>
+      ))
+    }
+
+    <!-- 5: broker -->
+    <section class="page">
+      <p class="eyebrow">Krok za krokem</p>
+      <h2 class="mt-2">Jak fond najít u brokera</h2>
+      <p class="mt-4 text-ink-soft">Postup platí pro XTB, Trading 212, Degiro, Interactive Brokers i Fio. Liší se jen to, jak vypadá vyhledávání v aplikaci.</p>
+      <ol class="mt-8 space-y-6">
+        {
+          [
+            ['Zkopírujte ISIN', 'Z převodníku na stranách 3–4 vezměte ISIN, ne ticker. Ticker se mezi burzami liší, ISIN ne.'],
+            ['Vyhledejte ho v aplikaci', 'Pokud fond nenajdete, broker ho nenabízí. Vyberte jinou obdobu ze stejného řádku převodníku.'],
+            ['Vyberte burzu a měnu', 'Stejný fond se obchoduje třeba v EUR na Xetře a v USD nebo GBP v Londýně. Zvolte měnu, ve které máte peníze na účtu, ať neplatíte za směnu při každém nákupu.'],
+            ['Zkontrolujte třídu', 'Acc = dividendy se reinvestují, Dist = vyplácí se. Pro dlouhodobé spoření bývá jednodušší Acc.'],
+            ['Nastavte pravidelný nákup', 'Pokud to broker umí, nastavte trvalý příkaz a měsíční investici. Pravidelnost pomáhá víc než hledání ideálního okamžiku.'],
+          ].map(([t, d], i) => (
+            <li class="flex gap-5">
+              <span class="grid size-10 shrink-0 place-items-center rounded-full bg-pine font-serif text-lg text-white">{i + 1}</span>
+              <div>
+                <h3>{t}</h3>
+                <p class="mt-1 text-ink-soft">{d}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="mt-10 rounded-xl bg-brick-50 p-5">
+        <h3>Pozor na poplatky brokera</h3>
+        <p class="mt-1 text-ink-soft">
+          TER fondu je jen část nákladů. Zkontrolujte v ceníku brokera poplatek za nákup, za směnu měny a za vedení účtu. Ceníky se mění, proto je v taháku
+          neuvádíme.
+        </p>
+      </div>
+      <div class="foot"><span>{site.brand} 2026</span><span>5 / {pages}</span></div>
+    </section>
+
+    <!-- 6: poplatky -->
+    <section class="page">
+      <p class="eyebrow">Poplatky</p>
+      <h2 class="mt-2">Kolik vás stojí TER</h2>
+      <p class="mt-4 text-ink-soft">
+        Modelové náklady na poplatky fondu oproti fondu bez poplatků. Výnos 7 % ročně před poplatky, měsíční úročení, bez daní a měnového kurzu. Všechny fondy
+        sledují index S&amp;P 500.
+      </p>
+      <table class="mt-8">
+        <thead>
+          <tr>
+            <th>Fond</th>
+            <th>TER</th>
+            {scenarios.map((s) => <th class="text-right">{fmt.czk(s.initial)} + {fmt.czk(s.monthly)}/měs., {s.years} let</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {
+            funds.map((f) => (
+              <tr>
+                <td class="font-semibold">{f.label}</td>
+                <td>{fmt.ter(f.ter)}</td>
+                {scenarios.map((s) => (
+                  <td class="text-right">{fmt.czk(feeCost({ ...s, annualReturn: 7, ter: f.ter }))}</td>
+                ))}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+      <div class="mt-10 grid grid-cols-2 gap-6">
+        <div class="rounded-xl border border-line bg-white p-5">
+          <h3>Co z toho plyne</h3>
+          <p class="mt-1 text-ink-soft">
+            Mezi indexovými ETF na stejný index jsou rozdíly v řádu tisíců korun. Mezi ETF a fondem s poplatkem přes 1 % jsou to často statisíce.
+          </p>
+        </div>
+        <div class="rounded-xl border border-line bg-white p-5">
+          <h3>Kde najdete TER svého fondu</h3>
+          <p class="mt-1 text-ink-soft">V sdělení klíčových informací (KID) jako „průběžné náklady“, případně na stránce fondu u emitenta.</p>
+        </div>
+      </div>
+      <div class="foot"><span>Spočítejte si vlastní čísla na webu</span><span>6 / {pages}</span></div>
+    </section>
+
+    <!-- 7: daně a chyby -->
+    <section class="page">
+      <p class="eyebrow">Daně a chyby</p>
+      <h2 class="mt-2">Daně na jedné straně</h2>
+      <div class="mt-5 space-y-4">
+        <div>
+          <h3>Při prodeji</h3>
+          <p class="mt-1 text-ink-soft">{fact('time-test-3y').text_cs}</p>
+          <p class="mt-1 text-ink-soft">{fact('value-test-100k').text_cs}</p>
+          <p class="mt-1 text-ink-soft">{fact('cap-40m-abolished').text_cs}</p>
+        </div>
+        <div>
+          <h3>Dividendy</h3>
+          <p class="mt-1 text-ink-soft">{fact('w8ben-withholding').text_cs}</p>
+          <p class="mt-1 text-ink-soft">{fact('irish-ucits-15').text_cs}</p>
+        </div>
+      </div>
+      <h2 class="mt-10">5 drahých chyb začátečníků</h2>
+      <ol class="mt-5 space-y-3">
+        {
+          [
+            ['Dva fondy na stejný index', 'VUAA a CSPX vedle sebe nepřidají diverzifikaci, jen složitější evidenci.'],
+            ['Honba za dividendou', 'Vysoká dividenda není „výnos navíc“. Cena fondu o ni klesne a z vyplacené dividendy platíte daň.'],
+            ['Zbytečná směna měny', 'Nakupujte v měně, kterou na účtu máte. Opakovaná konverze ukrojí víc než rozdíl v TER.'],
+            ['Prodej při prvním propadu', 'Poklesy o desítky procent jsou u akciových ETF běžné. Prodej v panice zamkne ztrátu.'],
+            ['Ztracený přehled o datech nákupu', 'Kvůli časovému testu si veďte, kdy a za kolik jste nakupovali. Výpis od brokera si ukládejte.'],
+          ].map(([t, d], i) => (
+            <li class="flex gap-4">
+              <span class="font-serif text-xl text-brick">{i + 1}.</span>
+              <p>
+                <strong class="text-ink">{t}.</strong> <span class="text-ink-soft">{d}</span>
+              </p>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="foot"><span>Toto není daňové poradenství. Při nejasnostech se obraťte na daňového poradce.</span><span>7 / {pages}</span></div>
+    </section>
+
+    <!-- 8: zdroje -->
+    <section class="page">
+      <p class="eyebrow">Zdroje a upozornění</p>
+      <h2 class="mt-2">Odkud čísla jsou</h2>
+      <ul class="mt-5 space-y-1.5 text-[9pt] break-all text-ink-soft">
+        {
+          etfs.map((e) => (
+            <li>
+              <strong class="text-ink">{e.ticker}:</strong> {e.sourceUrl}
+            </li>
+          ))
+        }
+        {data.facts.map((f) => <li>{f.sourceUrl}</li>)}
+        <li>UCITS fondy: justetf.com</li>
+      </ul>
+      <div class="mt-8 rounded-xl border border-line bg-white p-5 text-ink-soft">
+        <h3>Důležité upozornění</h3>
+        <p class="mt-2">
+          Tento materiál má pouze informační charakter a není investičním doporučením, nabídkou ani daňovým poradenstvím. Investování nese riziko ztráty, hodnota
+          investice může klesat i růst a minulé výnosy nejsou zárukou budoucích. Výnosy amerických fondů jsou v USD a výsledek v korunách ovlivňuje kurz. Před nákupem
+          si přečtěte KID konkrétního fondu. Data k {fmt.date(data.asOf)}.
+        </p>
+      </div>
+      <p class="mt-8 font-serif text-xl text-pine">Další aktualizaci dat vám pošleme e-mailem po konci čtvrtletí.</p>
+      <div class="foot"><span>{site.brand} 2026</span><span>8 / {pages}</span></div>
+    </section>
+  </body>
+</html>

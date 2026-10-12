@@ -1,0 +1,719 @@
+{
+  "asOf": "2026-09-30",
+  "dataRetrieved": "2026-10-12",
+  "etfs": [
+    {
+      "ticker": "SPY",
+      "name": "State Street SPDR S&P 500 ETF Trust",
+      "issuer": "State Street Global Advisors",
+      "exchange": "NYSE Arca",
+      "index": "S&P 500 Index",
+      "inception": "1993-01-22",
+      "ter": 0.0945,
+      "terNote": "gross expense ratio (no waiver)",
+      "aumUsd": 821678532946,
+      "aumAsOf": "2026-10-09",
+      "returns": {
+        "y1": 15.6,
+        "y5": 13.65,
+        "y10": 15.18,
+        "sinceInception": 10.82,
+        "asOf": "2026-09-30",
+        "basis": "NAV, annualized total return, quarter end"
+      },
+      "distribution": "quarterly",
+      "domicile": "US",
+      "category": "sp500",
+      "sourceUrl": "https://www.ssga.com/us/en/intermediary/etfs/spdr-sp-500-etf-trust-spy",
+      "ucits": [
+        {
+          "ticker": "SPYL",
+          "exchange": "LSE (USD) / Xetra (EUR)",
+          "isin": "IE000XZSV718",
+          "name": "State Street SPDR S&P 500 UCITS ETF USD Unhedged (Acc)",
+          "ter": 0.03,
+          "policy": "accumulating",
+          "domicile": "IE",
+          "sizeEur": 17631000000.0,
+          "url": "https://www.justetf.com/en/etf-profile.html?isin=IE000XZSV718",
+          "exactMatch": true,
+          "note": "Stejný emitent i index, nejlevnější S&P 500 UCITS ETF.",
+          "primary": "SPYL",
+          "noteEn": "Same issuer (State Street), same index; cheapest S&P 500 UCITS ETF per justETF."
+        },
+        {
+          "ticker": "CSPX (LSE, USD) / SXR8 (Xetra, EUR)",
+          "exchange": "LSE / Xetra",
+          "isin": "IE00B5BMR087",
+          "name": "iShares Core S&P 500 UCITS ETF USD (Acc)",
+          "ter": 0.07,
+          "policy": "accumulating",
+          "domicile": "IE",
+          "sizeEur": 141214000000.0,
+          "url": "https://www.justetf.com/en/etf-profile.html?isin=IE00B5BMR087",
+          "exactMatch": true,
+          "note": "Největší S&P 500 UCITS ETF.",
+          "primary": "CSPX",
+          "noteEn": "Largest S&P 500 UCITS ETF."
+        }
+      ],
+      "yield": {
+        "value": 0.94,
+        "type": "30-day SEC yield",
+        "asOf": "2026-10-09",
+        "alt": {
+          "value": 0.97,
+          "type": "fund distribution yield (trailing 365 days)",
+          "asOf": "2026-10-09"
+        },
+        "estimate": false
+      },
+      "formerTicker": null
+    },
+    {
+      "ticker": "IVV",
+      "name": "iShares Core S&P 500 ETF",
+      "issuer": "BlackRock (iShares)",
+      "exchange": "NYSE Arca",
+      "index": "S&P 500 Index",
+      "inception": "2000-05-15",
+      "ter": 0.03,
+      "terNote": "expense ratio per prospectus",
+      "aumUsd": 896439871787,
+      "aumAsOf": "2026-10-09",
+      "returns": {
+        "y1": 15.71,
+        "y5": 13.76,
+        "y10": 15.3,
+        "sinceInception": 8.42,
+        "asOf": "2026-09-30",
+        "basis": "NAV, average annual total return, quarter end"
+      },
+      "distribution": "quarterly",
+      "domicile": "US",
+      "category": "sp500",
+      "sourceUrl": "https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf",
+      "ucits": [
+        {
+          "ticker": "CSPX (LSE, USD) / SXR8 (Xetra, EUR)",
+          "exchange": "LSE / Xetra",
+          "isin": "IE00B5BMR087",
+          "name": "iShares Core S&P 500 UCITS ETF USD (Acc)",
+          "ter": 0.07,
+          "policy": "accumulating",
+          "domicile": "IE",
+          "sizeEur": 141214000000.0,
+          "url": "https://www.justetf.com/en/etf-profile.html?isin=IE00B5BMR087",
+          "exactMatch": true,
+          "note": "Stejný emitent (iShares) i index.",
+          "primary": "CSPX",
+          "noteEn": "Same issuer (iShares), same index."
+        },
+        {
+          "ticker": "SPYL",
+          "exchange": "LSE (USD) / Xetra (EUR)",
+          "isin": "IE000XZSV718",
+          "name": "State Street SPDR S&P 500 UCITS ETF USD Unhedged (Acc)",
+          "ter": 0.03,
+          "policy": "accumulating",
+          "domicile": "IE",
+          "sizeEur": 17631000000.0,
+          "url": "https://www.justetf.com/en/etf-profile.html?isin=IE000XZSV718",
+          "exactMatch": true,
+          "note": "Levnější alternativa na stejný index.",
+          "primary": "SPYL",
+          "noteEn": "Cheaper alternative on the same index (TER 0.03 %)."
+        }
+      ],
+      "yield": {
+        "value": 0.94,
+        "type": "30-day SEC yield",
+        "asOf": "2026-08-31",
+        "alt": {
+          "value": 1.06,
+          "type": "12m trailing yield",
+          "asOf": "2026-08-31"
+        },
+        "estimate": false
+      },
+      "formerTicker": null
+    },
+    {
+      "ticker": "VOO",
+      "name": "Vanguard S&P 500 ETF",
+      "issuer": "Vanguard",
+      "exchange": "NYSE Arca",
+      "index": "S&P 500 Index",
+      "inception": "2010-09-07",
+      "ter": 0.03,
+      "terNote": "expense ratio as of 2026-04-28",
+      "aumUsd": 1000000000000.0,
+      "aumAsOf": "2026-09-30",
+      "aumNote": "ETF share class total net assets, published rounded as '$1.0 trillion'; whole Vanguard 500 Index Fund (all share classes) = $1.7 trillion",
+      "returns": {
+        "y1": 15.7,
+        "y5": 13.75,
+        "y10": 15.29,
+        "sinceInception": 14.94,
+        "asOf": "2026-09-30",
+        "basis": "NAV, average annual total return, quarter end"
+      },
+      "distribution": "quarterly",
+      "domicile": "US",
+      "category": "sp500",
+      "sourceUrl": "https://investor.vanguard.com/investment-products/etfs/profile/voo",
+      "ucits": [
+        {
+          "ticker": "VUAA",
+          "exchange": "LSE (USD) / Xetra (EUR)",
+          "isin": "IE00BFMXXD54",
+          "name": "Vanguard S&P 500 UCITS ETF (USD) Accumulating",
+          "ter": 0.07,
+          "policy": "accumulating",
+          "domicile": "IE",
+          "sizeEur": 33446000000.0,
+          "url": "https://www.justetf.com/en/etf-profile.html?isin=IE00BFMXXD54",
+          "exactMatch": true,
+          "note": "Stejný emitent i index, akumulační třída.",
+          "primary": "VUAA",
+          "noteEn": "Same issuer (Vanguard), same index, accumulating."
+        },
+        {
+          "ticker": "VUSD (LSE, USD) / VUSA (Xetra, EUR)",
+          "exchange": "LSE / Xetra",
+          "isin": "IE00B3XXRP09",
+          "name": "Vanguard S&P 500 UCITS ETF (USD) Distributing",
+          "ter": 0.07,
+          "policy": "distributing",
+          "domicile": "IE",
+          "sizeEur": 48116000000.0,
+          "url": "https://www.justetf.com/en/etf-profile.html?isin=IE00B3XXRP09",
+          "exactMatch": true,
+          "note": "Distribuční třída téhož fondu, vyplácí čtvrtletně.",
+          "primary": "VUSD",
+          "noteEn": "Distributing share class of the same Vanguard fund (pays quarterly)."
+        }
+      ],
+      "yield": {
+        "value": 1.0,
+        "type": "30-day SEC yield",
+        "asOf": "2026-09-30",
+        "alt": {
+          "value": 1.04,
+          "type": "trailing-12m distribution yield COMPUTED by us from Vanguard-published dividends (4 payments 12/2025-09/2026 = $7.4282) / NAV $715.54 (2026-10-09)",
+          "asOf": "2026-10-09"
+        },
+        "estimate": false
+      },
+      "formerTicker": null
+    },
+    {
+      "ticker": "SPYM",
+      "formerTicker": "SPLG",
+      "name": "State Street SPDR Portfolio S&P 500 ETF",
+      "issuer": "State Street Global Advisors",
+      "exchange": "NYSE Arca",
+      "index": "S&P 500 Index",
+      "inception": "2005-11-08",
+      "ter": 0.02,
+      "terNote": "gross expense ratio",
+      "aumUsd": 181592040101,
+      "aumAsOf": "2026-10-09",
+      "returns": {
+        "y1": 15.7,
+        "y5": 13.76,
+        "y10": 15.31,
+        "sinceInception": 11.29,
+        "asOf": "2026-09-30",
+        "basis": "NAV, annualized total return, quarter end"
+      },
+      "distribution": "quarterly",
+      "domicile": "US",
+      "category": "sp500",
+      "sourceUrl": "https://www.ssga.com/us/en/intermediary/etfs/state-street-spdr-portfolio-sp-500-etf-spym",
+      "renameNote": "Ticker SPLG -> SPYM and name SPDR Portfolio S&P 500 ETF -> State Street SPDR Portfolio S&P 500 ETF, effective before market open 2025-10-31 (SSGA notice to APs, https://www.ssga.com/library-content/products/fund-docs/etfs/us/information-schedules/ap-notice/notice-to-aps-ticker-fund-name-and-benchmark-index-name-changes-10-31-25.pdf).",
+      "ucits": [
+        {
+          "ticker": "SPYL",
+          "exchange": "LSE (USD) / Xetra (EUR)",
+          "isin": "IE000XZSV718",
+          "name": "State Street SPDR S&P 500 UCITS ETF USD Unhedged (Acc)",
+          "ter": 0.03,
+          "policy": "accumulating",
+          "domicile": "IE",
+          "sizeEur": 17631000000.0,
+          "url": "https://www.justetf.com/en/etf-profile.html?isin=IE000XZSV718",
+          "exactMatch": true,
+          "note": "Stejný emitent i index.",
+          "primary": "SPYL",
+          "noteEn": "Same issuer (State Street), same index, same 'cheapest' positioning (TER 0.03 % vs 0.02 % in US)."
+        }
+      ],
+      "yield": {
+        "value": 1.02,
+        "type": "30-day SEC yield",
+        "asOf": "2026-10-09",
+        "alt": {
+          "value": 0.99,
+          "type": "fund distribution yield (trailing 365 days)",
+          "asOf": "2026-10-09"
+        },
+        "estimate": false
+      }
+    },
+    {
+      "ticker": "VTI",
+      "name": "Vanguard Morningstar Total Stock Market ETF",
+      "issuer": "Vanguard",
+      "exchange": "NYSE Arca",
+      "index": "Morningstar US Total Market Index (formerly CRSP US Total Market Index; rebranded after Morningstar acquired CRSP)",
+      "inception": "2001-05-24",
+      "ter": 0.03,
+      "terNote": "expense ratio as of 2026-04-28",
+      "aumUsd": 689200000000.0,
+      "aumAsOf": "2026-09-30",
+      "aumNote": "ETF share class; whole Total Stock Market Index Fund (all share classes) = $2.3 trillion",
+      "returns": {
+        "y1": 15.33,
+        "y5": 12.56,
+        "y10": 14.7,
+        "sinceInception": 9.44,
+        "asOf": "2026-09-30",
+        "basis": "NAV, average annual total return, quarter end"
+      },
+      "distribution": "quarterly",
+      "domicile": "US",
+      "category": "us-total",
+      "sourceUrl": "https://investor.vanguard.com/investment-products/etfs/profile/vti",
+      "ucits": [
+        {
+          "ticker": "XD9U",
+          "exchange": "LSE (USD) / Xetra (EUR)",
+          "isin": "IE00BJ0KDR00",
+          "name": "Xtrackers MSCI USA UCITS ETF 1C",
+          "ter": 0.03,
+          "policy": "accumulating",
+          "domicile": "IE",
+          "sizeEur": 12280000000.0,
+          "url": "https://www.justetf.com/en/etf-profile.html?isin=IE00BJ0KDR00",
+          "exactMatch": false,
+          "note": "Jen velké a střední firmy (asi 85 % trhu USA), VTI drží i ty malé.",
+          "primary": "XD9U",
+          "noteEn": "NOT exact: MSCI USA covers large + mid caps only (~85 % of US market); VTI also holds small/micro caps. No UCITS ETF tracking a US total-market index (CRSP/Morningstar US Total Market or MSCI USA IMI) was found on justETF."
+        },
+        {
+          "ticker": "CSPX / SXR8",
+          "exchange": "LSE / Xetra",
+          "isin": "IE00B5BMR087",
+          "name": "iShares Core S&P 500 UCITS ETF USD (Acc)",
+          "ter": 0.07,
+          "policy": "accumulating",
+          "domicile": "IE",
+          "sizeEur": 141214000000.0,
+          "url": "https://www.justetf.com/en/etf-profile.html?isin=IE00B5BMR087",
+          "exactMatch": false,
+          "note": "Jen 500 největších amerických firem.",
+          "primary": "CSPX",
+          "noteEn": "NOT exact: S&P 500 = large caps only; historically very highly correlated with US total market."
+        }
+      ],
+      "yield": {
+        "value": 1.03,
+        "type": "30-day SEC yield",
+        "asOf": "2026-09-30",
+        "alt": {
+          "value": 1.03,
+          "type": "trailing-12m distribution yield COMPUTED ($3.9482 / NAV $381.94 on 2026-10-09)",
+          "asOf": "2026-10-09"
+        },
+        "estimate": false
+      },
+      "formerTicker": null
+    },
+    {
+      "ticker": "VT",
+      "name": "Vanguard Total World Stock ETF",
+      "issuer": "Vanguard",
+      "exchange": "NYSE Arca",
+      "index": "FTSE Global All Cap Index",
+      "inception": "2008-06-24",
+      "ter": 0.06,
+      "terNote": "expense ratio as of 2026-02-27",
+      "aumUsd": 81800000000.0,
+      "aumAsOf": "2026-09-30",
+      "aumNote": "ETF share class; whole fund (all share classes) = $101.2 billion",
+      "returns": {
+        "y1": 16.32,
+        "y5": 11.34,
+        "y10": 12.32,
+        "sinceInception": 8.78,
+        "asOf": "2026-09-30",
+        "basis": "NAV, average annual total return, quarter end"
+      },
+      "distribution": "quarterly",
+      "domicile": "US",
+      "category": "world",
+      "sourceUrl": "https://investor.vanguard.com/investment-products/etfs/profile/vt",
+      "ucits": [
+        {
+          "ticker": "VWCE (Xetra, EUR) / VWRA (LSE, USD)",
+          "exchange": "Xetra / LSE",
+          "isin": "IE00BK5BQT80",
+          "name": "Vanguard FTSE All-World UCITS ETF (USD) Accumulating",
+          "ter": 0.14,
+          "policy": "accumulating",
+          "domicile": "IE",
+          "sizeEur": 55367000000.0,
+          "url": "https://www.justetf.com/en/etf-profile.html?isin=IE00BK5BQT80",
+          "exactMatch": false,
+          "note": "Stejný emitent, index ale nezahrnuje malé firmy.",
+          "primary": "VWCE",
+          "noteEn": "Near-equivalent, same issuer: FTSE All-World = large + mid caps (~4,000 stocks); VT tracks FTSE Global All Cap incl. small caps. TER 0.14 % per justETF."
+        },
+        {
+          "ticker": "SPYI (Xetra, EUR) / IMID (LSE, USD)",
+          "exchange": "Xetra / LSE",
+          "isin": "IE00B3YLTY66",
+          "name": "State Street SPDR MSCI All Country World Investable Market UCITS ETF USD Unhedged (Acc)",
+          "ter": 0.17,
+          "policy": "accumulating",
+          "domicile": "IE",
+          "sizeEur": 8272000000.0,
+          "url": "https://www.justetf.com/en/etf-profile.html?isin=IE00B3YLTY66",
+          "exactMatch": false,
+          "note": "Pokrytím bližší VT (včetně malých firem), jiný index (MSCI ACWI IMI).",
+          "primary": "SPYI",
+          "noteEn": "Closer in coverage to VT (MSCI ACWI IMI includes small caps), different index provider."
+        }
+      ],
+      "yield": {
+        "value": 1.51,
+        "type": "trailing-12m distribution yield COMPUTED by us from Vanguard-published dividends (12/2025-09/2026 = $2.4135) / NAV $159.65 (2026-10-09); Vanguard shows no SEC yield ('—') for this fund",
+        "asOf": "2026-10-09",
+        "estimate": true
+      },
+      "formerTicker": null
+    },
+    {
+      "ticker": "SCHD",
+      "name": "Schwab U.S. Dividend Equity ETF",
+      "issuer": "Schwab Asset Management",
+      "exchange": "NYSE Arca",
+      "index": "Dow Jones U.S. Dividend 100 Index",
+      "inception": "2011-10-20",
+      "ter": 0.06,
+      "terNote": "total expense ratio",
+      "aumUsd": 110315371812.8,
+      "aumAsOf": "2026-10-09",
+      "returns": {
+        "y1": 23.36,
+        "y5": 9.48,
+        "y10": 12.44,
+        "sinceInception": 13.11,
+        "asOf": "2026-09-30",
+        "basis": "NAV, annualized total return, month/quarter end"
+      },
+      "distribution": "quarterly",
+      "domicile": "US",
+      "category": "dividend",
+      "sourceUrl": "https://www.schwabassetmanagement.com/products/schd",
+      "ucits": [
+        {
+          "ticker": "FUSD (LSE USD / Xetra EUR) / FUSI (LSE GBX)",
+          "exchange": "LSE / Xetra",
+          "isin": "IE00BYXVGX24",
+          "name": "Fidelity US Quality Income UCITS ETF INC-USD",
+          "ter": 0.25,
+          "policy": "distributing",
+          "domicile": "IE",
+          "sizeEur": 1358000000.0,
+          "url": "https://www.justetf.com/en/etf-profile.html?isin=IE00BYXVGX24",
+          "exactMatch": false,
+          "note": "Jiný index (kvalita a dividenda), nejčastěji uváděná náhrada SCHD.",
+          "primary": "FUSD",
+          "noteEn": "NOT exact: different index (Fidelity US Quality Income), quality + dividend tilt; most frequently cited SCHD substitute. Acc class: FUSA, IE00BYXVGY31, TER 0.25 %, EUR 370 m."
+        },
+        {
+          "ticker": "SPYD (Xetra, EUR) / UDVD (LSE, USD) / USDV (LSE, GBP)",
+          "exchange": "Xetra / LSE",
+          "isin": "IE00B6YX5D40",
+          "name": "State Street SPDR S&P U.S. Dividend Aristocrats UCITS ETF USD Unhedged (Dist)",
+          "ter": 0.35,
+          "policy": "distributing",
+          "domicile": "IE",
+          "sizeEur": 3287000000.0,
+          "url": "https://www.justetf.com/en/etf-profile.html?isin=IE00B6YX5D40",
+          "exactMatch": false,
+          "note": "Jiný index (dividendoví aristokraté), vyšší poplatek.",
+          "primary": "SPYD",
+          "noteEn": "NOT exact: S&P High Yield Dividend Aristocrats (20+ years of dividend growth), higher TER. No UCITS ETF tracking the Dow Jones U.S. Dividend 100 Index was found."
+        }
+      ],
+      "yield": {
+        "value": 3.32,
+        "type": "30-day SEC yield",
+        "asOf": "2026-10-08",
+        "alt": {
+          "value": 3.0,
+          "type": "distribution yield (TTM)",
+          "asOf": "2026-08-31"
+        },
+        "estimate": false
+      },
+      "formerTicker": null
+    },
+    {
+      "ticker": "VEA",
+      "name": "Vanguard FTSE Developed Markets ETF",
+      "issuer": "Vanguard",
+      "exchange": "NYSE Arca",
+      "index": "FTSE Developed All Cap ex US Index",
+      "inception": "2007-07-20",
+      "ter": 0.03,
+      "terNote": "expense ratio as of 2026-04-28",
+      "aumUsd": 231600000000.0,
+      "aumAsOf": "2026-09-30",
+      "aumNote": "ETF share class; whole Developed Markets Index Fund = $313.5 billion",
+      "returns": {
+        "y1": 20.77,
+        "y5": 10.32,
+        "y10": 9.76,
+        "sinceInception": 4.93,
+        "asOf": "2026-09-30",
+        "basis": "NAV, average annual total return, quarter end"
+      },
+      "distribution": "quarterly",
+      "domicile": "US",
+      "category": "developed-ex-us",
+      "sourceUrl": "https://investor.vanguard.com/investment-products/etfs/profile/vea",
+      "ucits": [
+        {
+          "ticker": "EXUS",
+          "exchange": "LSE (USD) / Xetra (EUR)",
+          "isin": "IE0006WW1TQ4",
+          "name": "Xtrackers MSCI World ex USA UCITS ETF 1C",
+          "ter": 0.15,
+          "policy": "accumulating",
+          "domicile": "IE",
+          "sizeEur": 6954000000.0,
+          "url": "https://www.justetf.com/en/etf-profile.html?isin=IE0006WW1TQ4",
+          "exactMatch": false,
+          "note": "Index MSCI World ex USA: bez Jižní Koreje a malých firem.",
+          "primary": "EXUS",
+          "noteEn": "Near-equivalent: MSCI World ex USA = large + mid caps, excludes South Korea (FTSE treats Korea as developed) and small caps that VEA holds."
+        },
+        {
+          "ticker": "IXUA (Xetra, EUR) / XUSE (LSE, GBP)",
+          "exchange": "Xetra / LSE",
+          "isin": "IE000R4ZNTN3",
+          "name": "iShares MSCI World ex-USA UCITS ETF USD (Acc)",
+          "ter": 0.15,
+          "policy": "accumulating",
+          "domicile": "IE",
+          "sizeEur": 3262000000.0,
+          "url": "https://www.justetf.com/en/etf-profile.html?isin=IE000R4ZNTN3",
+          "exactMatch": false,
+          "note": "Stejný index jako EXUS, fond existuje od roku 2025.",
+          "primary": "IXUA",
+          "noteEn": "Same index as EXUS; launched Jan 2025."
+        }
+      ],
+      "yield": {
+        "value": 2.43,
+        "type": "trailing-12m distribution yield COMPUTED by us (12/2025-09/2026 = $1.7037) / NAV $70.13 (2026-10-09); Vanguard shows no SEC yield ('—')",
+        "asOf": "2026-10-09",
+        "estimate": true
+      },
+      "formerTicker": null
+    },
+    {
+      "ticker": "VWO",
+      "name": "Vanguard FTSE Emerging Markets ETF",
+      "issuer": "Vanguard",
+      "exchange": "NYSE Arca",
+      "index": "FTSE Emerging Markets All Cap China A Inclusion Index",
+      "inception": "2005-03-04",
+      "ter": 0.06,
+      "terNote": "expense ratio as of 2026-02-27",
+      "aumUsd": 125400000000.0,
+      "aumAsOf": "2026-09-30",
+      "aumNote": "ETF share class; whole Emerging Markets Stock Index Fund = $164.7 billion",
+      "returns": {
+        "y1": 12.54,
+        "y5": 6.62,
+        "y10": 7.66,
+        "sinceInception": 6.79,
+        "asOf": "2026-09-30",
+        "basis": "NAV, average annual total return, quarter end"
+      },
+      "distribution": "quarterly",
+      "domicile": "US",
+      "category": "emerging",
+      "sourceUrl": "https://investor.vanguard.com/investment-products/etfs/profile/vwo",
+      "ucits": [
+        {
+          "ticker": "VFEA",
+          "exchange": "LSE (USD) / Xetra (EUR)",
+          "isin": "IE00BK5BR733",
+          "name": "Vanguard FTSE Emerging Markets UCITS ETF (USD) Accumulating",
+          "ter": 0.17,
+          "policy": "accumulating",
+          "domicile": "IE",
+          "sizeEur": 2179000000.0,
+          "url": "https://www.justetf.com/en/etf-profile.html?isin=IE00BK5BR733",
+          "exactMatch": false,
+          "note": "Stejný emitent, užší index bez malých firem.",
+          "primary": "VFEA",
+          "noteEn": "Same issuer, but index is FTSE Emerging (large + mid), not the All Cap China A Inclusion index. Dist class: VFEM, IE00B3VVMM84, TER 0.17 %, EUR 3,212 m."
+        },
+        {
+          "ticker": "EIMI (LSE, USD) / IS3N (Xetra, EUR)",
+          "exchange": "LSE / Xetra",
+          "isin": "IE00BKM4GZ66",
+          "name": "iShares Core MSCI Emerging Markets IMI UCITS ETF (Acc)",
+          "ter": 0.18,
+          "policy": "accumulating",
+          "domicile": "IE",
+          "sizeEur": 40259000000.0,
+          "url": "https://www.justetf.com/en/etf-profile.html?isin=IE00BKM4GZ66",
+          "exactMatch": false,
+          "note": "Pokrytím bližší (včetně malých firem), index od MSCI.",
+          "primary": "EIMI",
+          "noteEn": "Closer in coverage (includes small caps), different index provider (MSCI); largest EM UCITS ETF."
+        }
+      ],
+      "yield": {
+        "value": 2.03,
+        "type": "trailing-12m distribution yield COMPUTED by us (3 payments 12/2025, 06/2026, 09/2026 = $1.2172; no March 2026 payment listed) / NAV $59.87 (2026-10-09); Vanguard shows no SEC yield ('—')",
+        "asOf": "2026-10-09",
+        "estimate": true
+      },
+      "formerTicker": null
+    },
+    {
+      "ticker": "GLD",
+      "name": "SPDR Gold Shares",
+      "issuer": "State Street Global Advisors (sponsor: World Gold Trust Services, LLC)",
+      "exchange": "NYSE Arca",
+      "index": "LBMA Gold Price PM",
+      "inception": "2004-11-18",
+      "ter": 0.4,
+      "terNote": "gross expense ratio",
+      "aumUsd": 141682530606.86,
+      "aumAsOf": "2026-10-09",
+      "returns": {
+        "y1": 8.74,
+        "y5": 18.62,
+        "y10": 11.74,
+        "sinceInception": 10.37,
+        "asOf": "2026-09-30",
+        "basis": "NAV, annualized total return, quarter end"
+      },
+      "distribution": "none",
+      "domicile": "US",
+      "category": "gold",
+      "sourceUrl": "https://www.ssga.com/us/en/intermediary/etfs/spdr-gold-shares-gld",
+      "structureNote": "GLD is a grantor trust (not a 1940-Act fund).",
+      "ucits": [
+        {
+          "ticker": "IGLN (LSE, USD) / SGLN (LSE, GBX) / PPFB (Xetra, EUR)",
+          "exchange": "LSE / Xetra",
+          "isin": "IE00B4ND3602",
+          "name": "iShares Physical Gold ETC",
+          "ter": 0.12,
+          "policy": "none",
+          "domicile": "IE",
+          "sizeEur": 34064000000.0,
+          "url": "https://www.justetf.com/en/etf-profile.html?isin=IE00B4ND3602",
+          "exactMatch": false,
+          "note": "Fyzicky krytý ETC, ne fond UCITS (zlato v UCITS držet nejde). Ekonomicky stejná expozice.",
+          "primary": "IGLN",
+          "noteEn": "Physically backed ETC (debt security), NOT a UCITS fund - gold cannot be held in UCITS. Economically equivalent exposure."
+        },
+        {
+          "ticker": "4GLD",
+          "exchange": "Xetra (EUR)",
+          "isin": "DE000A0S9GB0",
+          "name": "Xetra-Gold",
+          "ter": 0.0,
+          "policy": "none",
+          "domicile": "DE",
+          "sizeEur": 20886000000.0,
+          "url": "https://www.justetf.com/en/etf-profile.html?isin=DE000A0S9GB0",
+          "exactMatch": false,
+          "note": "Fyzicky krytý ETC z Německa s nárokem na vydání zlata. Pozor na poplatek za úschovu u brokera.",
+          "primary": "4GLD",
+          "noteEn": "Physically backed ETC (bearer bond with right to physical delivery), domicile Germany, not UCITS. justETF shows TER 0.00 %; broker custody fees may apply."
+        }
+      ],
+      "yield": {
+        "value": null,
+        "type": "none - physical gold trust, pays no distributions",
+        "asOf": null,
+        "estimate": false
+      },
+      "formerTicker": null
+    }
+  ],
+  "facts": [
+    {
+      "id": "priips-kid",
+      "text_cs": "Nařízení EU č. 1286/2014 (PRIIPs) vyžaduje, aby retailový investor v EU dostal před nákupem sdíleného investičního produktu sdělení klíčových informací (KID) v předepsané podobě. Američtí emitenti ETF tyto dokumenty pro EU nevydávají, proto evropští brokeři retailovým klientům nákup ETF s domicilem v USA (SPY, VOO, VTI…) neumožní; dříve nakoupené kusy lze držet a prodat.",
+      "sourceUrl": "https://www.justetf.com/en/news/etf/us-domiciled-etfs.html",
+      "extraSources": [
+        "https://eur-lex.europa.eu/eli/reg/2014/1286/oj",
+        "https://www.amf-france.org/en/amf-ombudsman/ombudsman-online-diary/latest/application-priips-regulation-what-happens-us-packaged-products-subscribed-regulation-came-force"
+      ]
+    },
+    {
+      "id": "w8ben-withholding",
+      "text_cs": "Z dividend amerických akcií a ETF strhává USA srážkovou daň 30 %; český daňový rezident, který u brokera vyplní formulář W-8BEN, uplatní smlouvu o zamezení dvojího zdanění mezi ČR a USA a srážka se sníží na 15 %. Formulář platí do konce třetího kalendářního roku po podpisu.",
+      "sourceUrl": "https://finex.cz/w-8ben-formular/",
+      "extraSources": [
+        "https://www.irs.gov/individuals/international-taxpayers/nra-withholding"
+      ]
+    },
+    {
+      "id": "irish-ucits-15",
+      "text_cs": "Fondy s domicilem v Irsku (např. VUAA, CSPX, VWCE) platí díky smlouvě mezi Irskem a USA srážkovou daň z amerických dividend jen 15 % na úrovni fondu, zatímco fyzicky replikující fondy z Lucemburska platí 30 %. Tato srážka je již zohledněna ve výkonnosti fondu a investor ji nevyplňuje ani nezapočítává.",
+      "sourceUrl": "https://www.justetf.com/en/academy/synthetic-etfs-in-us-dominated-markets.html"
+    },
+    {
+      "id": "time-test-3y",
+      "text_cs": "Příjem z prodeje cenného papíru (včetně ETF) je u fyzické osoby osvobozen od daně, pokud doba mezi nabytím a prodejem přesáhne 3 roky (§ 4 odst. 1 písm. u) zákona č. 586/1992 Sb.); časový test se posuzuje pro každý nákup zvlášť a neplatí pro cenné papíry v obchodním majetku.",
+      "sourceUrl": "https://www.zakonyprolidi.cz/cs/1992-586"
+    },
+    {
+      "id": "cap-40m-abolished",
+      "text_cs": "Roční strop 40 mil. Kč pro osvobozené příjmy z prodeje cenných papírů po splnění časového testu platil jen pro rok 2025; od 1. ledna 2026 byl pro cenné papíry a obchodní podíly zrušen (zůstává pouze u kryptoaktiv). Povinnost oznámit finančnímu úřadu osvobozené příjmy nad 5 mil. Kč za rok trvá.",
+      "sourceUrl": "https://financnisprava.gov.cz/cs/financni-sprava/media-a-verejnost/tiskove-zpravy-gfr/tiskove-zpravy-2026/danove-novinky-pro-rok-2026",
+      "extraSources": [
+        "https://www.zakonyprolidi.cz/cs/1992-586",
+        "https://www.ey.com/cs_cz/insights/tax/danove-a-pravni-zpravy-listopad-2024"
+      ]
+    },
+    {
+      "id": "value-test-100k",
+      "text_cs": "Nezávisle na době držení jsou osvobozeny příjmy z prodeje cenných papírů, pokud jejich úhrn (hrubé příjmy z prodeje, ne zisk) nepřesáhne za zdaňovací období 100 000 Kč (§ 4 odst. 1 písm. t) ZDP); tento hodnotový test zůstává i v roce 2026.",
+      "sourceUrl": "https://www.zakonyprolidi.cz/cs/1992-586",
+      "extraSources": [
+        "https://financnisprava.gov.cz/cs/financni-sprava/media-a-verejnost/tiskove-zpravy-gfr/tiskove-zpravy-2026/danove-novinky-pro-rok-2026"
+      ]
+    }
+  ],
+  "notes": [
+    "CORRECTION to brief: the 40 mil. CZK annual cap on time-test-exempt securities income applied only in 2025; Finanční správa (press release 5 Jan 2026) confirms it was abolished for securities and business shares from 1 Jan 2026. Current ZDP text (version effective 2026-08-01, zakonyprolidi.cz) keeps the 40 M cap only in § 4 odst. 3 for crypto-assets (písm. zk). Letters: 100k value test = § 4 odst. 1 písm. t), 3-year time test = písm. u).",
+    "SPLG was renamed SPYM (and fund renamed 'State Street SPDR Portfolio S&P 500 ETF') effective 2025-10-31; data uses SPYM.",
+    "VTI is now named 'Vanguard Morningstar Total Stock Market ETF' and tracks the Morningstar US Total Market Index (rebrand of CRSP indexes after Morningstar acquired CRSP; Vanguard fact sheet said July 2026). Vanguard's own benchmark footnote on the page reads oddly (omits CRSP period) - index history should be double-checked if displayed.",
+    "All 10 US ETFs verified as NYSE Arca primary listing (SSGA/iShares/Schwab pages list 'NYSE Arca'; Vanguard pages state 'The fund's ETF Shares are listed for trading on NYSE Arca'). QQQ is listed on The Nasdaq Stock Market (per its SEC 485BPOS filing) -> excluded.",
+    "Vanguard AUM: aumUsd is the ETF share-class total net assets as published (rounded: '$1.0 trillion', '$689.2 billion' etc.) as of 2026-09-30; SSGA/iShares/Schwab figures are exact fund AUM as of 2026-10-09. Not perfectly comparable (as-of dates and rounding differ).",
+    "Vanguard publishes no SEC yield for VT, VEA, VWO (shown as '—'); the yield given for them is a trailing-12m distribution yield we computed from Vanguard's published per-share distributions and NAV of 2026-10-09 - label it as an estimate. Yield types differ across funds (30-day SEC vs trailing distribution) - see yield.type.",
+    "Returns are fund NAV total returns, annualized, as of 2026-09-30 (quarter end) for all 10 funds. Expense ratios: SSGA shows gross; others show the prospectus/total expense ratio (no waivers known).",
+    "SCHD distribution frequency 'quarterly' is from general knowledge/Schwab distribution schedule; the distributions section on the Schwab product page did not render during scraping, so it was not directly confirmed there.",
+    "UCITS data (TER, fund size EUR, policy, domicile, listings) from justETF profile pages fetched 2026-10-12; justETF does not show an explicit as-of date for fund size. justETF lists VWCE (Vanguard FTSE All-World Acc) TER as 0.14 %.",
+    "Broker availability (Trading 212 / XTB / Degiro / IBKR / Fio) was not verified per instrument; all listed UCITS tickers trade on LSE and/or Xetra, which IBKR and Degiro cover. Fio offers only selected foreign markets - check its instrument list.",
+    "No exact UCITS equivalents exist for VTI (US total market incl. small caps), SCHD (Dow Jones U.S. Dividend 100) and GLD (gold ETCs are not UCITS). VT/VEA/VWO UCITS alternatives track related but not identical indexes (see exactMatch/note).",
+    "PRIIPs fact: no Czech official (ČNB) source specific to US ETFs found; cited justETF explanation + EUR-Lex regulation text + French regulator AMF.",
+    "Percent values are plain percentages (0.03 = 0.03 %, 15.70 = 15.70 %). aumUsd and sizeEur are absolute amounts."
+  ]
+}

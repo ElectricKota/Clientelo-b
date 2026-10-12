@@ -1,0 +1,196 @@
+---
+interface Props {
+  /** Kde formulář na stránce je (pro měření). */
+  placement: string;
+  button?: string;
+  /** Tmavá varianta na tmavém pozadí. */
+  tone?: 'light' | 'dark';
+  class?: string;
+}
+
+const { placement, button = 'Poslat tahák zdarma', tone = 'light', class: className } = Astro.props;
+const id = `lf-${placement}`;
+const dark = tone === 'dark';
+---
+
+<lead-form data-placement={placement} class:list={['block', className]}>
+  <form action="/api/lead" method="post" class="w-full">
+    <label for={`${id}-email`} class:list={['mb-2 block text-sm font-semibold', dark ? 'text-white' : 'text-pine']}>
+      Váš e-mail
+    </label>
+    <div class="flex flex-col gap-3 sm:flex-row">
+      <input
+        id={`${id}-email`}
+        name="email"
+        type="email"
+        required
+        autocomplete="email"
+        inputmode="email"
+        autocapitalize="off"
+        spellcheck="false"
+        placeholder="jmeno@email.cz"
+        aria-describedby={`${id}-error ${id}-hint`}
+        class:list={[
+          'min-h-13 w-full flex-1 rounded-full border-2 bg-white px-5 text-base text-ink placeholder:text-ink-soft/70',
+          'aria-[invalid=true]:border-brick focus-visible:border-focus',
+          dark ? 'border-transparent' : 'border-line',
+        ]}
+      />
+      <button type="submit" class="btn btn-primary min-h-13 shrink-0 px-7" data-label={button}>
+        {button}
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 20 20" fill="none">
+          <path d="M4 10h11m0 0-4.5-4.5M15 10l-4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </button>
+    </div>
+
+    <p id={`${id}-error`} class:list={['mt-2 min-h-0 text-sm font-semibold empty:hidden', dark ? 'text-[#ffc9ad]' : 'text-brick']} aria-live="assertive"></p>
+
+    <p id={`${id}-hint`} class:list={['mt-3 text-sm', dark ? 'text-white/80' : 'text-ink-soft']}>
+      PDF stáhnete hned po odeslání. Jednou za čtvrtletí pošleme aktualizovaná data, odhlásíte se jedním kliknutím.
+      <a href="/ochrana-udaju" class:list={['underline underline-offset-4', dark ? 'text-white' : 'text-pine']}>Jak chráníme vaše údaje</a>
+    </p>
+
+    <input type="hidden" name="placement" value={placement} />
+    <input type="hidden" name="variant" value="" />
+    <input type="hidden" name="ts" value="" />
+    <div aria-hidden="true" class="absolute -left-[9999px] h-px w-px overflow-hidden">
+      <label>Nevyplňujte <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+    </div>
+  </form>
+</lead-form>
+
+<script>
+  import { track, getAttribution } from '../scripts/track';
+
+  const TYPOS: Record<string, string> = {
+    'gmail.cz': 'gmail.com',
+    'gmail.co': 'gmail.com',
+    'gmail.con': 'gmail.com',
+    'gmial.com': 'gmail.com',
+    'gnail.com': 'gmail.com',
+    'seznam.com': 'seznam.cz',
+    'seznan.cz': 'seznam.cz',
+    'sezam.cz': 'seznam.cz',
+    'emai.cz': 'email.cz',
+  };
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  class LeadForm extends HTMLElement {
+    form!: HTMLFormElement;
+    input!: HTMLInputElement;
+    error!: HTMLElement;
+    button!: HTMLButtonElement;
+    started = false;
+
+    get placement() {
+      return this.dataset.placement ?? 'unknown';
+    }
+
+    connectedCallback() {
+      this.form = this.querySelector('form')!;
+      this.input = this.form.querySelector('input[type=email]')!;
+      this.error = this.form.querySelector('[aria-live]')!;
+      this.button = this.form.querySelector('button[type=submit]')!;
+
+      // S JS validujeme sami (lepší hlášky), bez JS zůstává nativní validace prohlížeče.
+      this.form.noValidate = true;
+      this.setHidden('ts', String(Date.now()));
+      this.setHidden('variant', document.documentElement.dataset.variant ?? 'a');
+
+      new IntersectionObserver(
+        ([entry], io) => {
+          if (entry.isIntersecting) {
+            track('form_view', { placement: this.placement });
+            io.disconnect();
+          }
+        },
+        { threshold: 0.6 },
+      ).observe(this.form);
+
+      this.input.addEventListener('focus', () => {
+        if (this.started) return;
+        this.started = true;
+        track('form_start', { placement: this.placement });
+      });
+      this.input.addEventListener('input', () => {
+        if (this.input.getAttribute('aria-invalid')) this.clearError();
+      });
+      this.form.addEventListener('submit', (e) => this.submit(e));
+    }
+
+    setHidden(name: string, value: string) {
+      let field = this.form.querySelector<HTMLInputElement>(`input[name="${name}"]`);
+      if (!field) {
+        field = Object.assign(document.createElement('input'), { type: 'hidden', name });
+        this.form.append(field);
+      }
+      field.value = value;
+    }
+
+    showError(message: string, reason: string) {
+      this.input.setAttribute('aria-invalid', 'true');
+      this.error.textContent = message;
+      this.input.focus();
+      track('form_error', { placement: this.placement, reason });
+    }
+
+    clearError() {
+      this.input.removeAttribute('aria-invalid');
+      this.error.textContent = '';
+    }
+
+    async submit(e: SubmitEvent) {
+      e.preventDefault();
+      const email = this.input.value.trim();
+
+      if (!EMAIL_RE.test(email)) {
+        this.showError(email ? 'Tenhle e-mail nevypadá úplně správně. Zkontrolujte ho prosím.' : 'Vyplňte prosím e-mail, na který tahák pošleme.', email ? 'invalid' : 'empty');
+        return;
+      }
+      const domain = email.split('@')[1].toLowerCase();
+      if (TYPOS[domain] && this.input.dataset.typoChecked !== email) {
+        this.input.dataset.typoChecked = email;
+        this.showError(`Nemysleli jste @${TYPOS[domain]}? Pokud je e-mail správně, odešlete ho znovu.`, 'typo');
+        return;
+      }
+
+      for (const [key, value] of Object.entries(getAttribution())) this.setHidden(key, value);
+      try {
+        const calc = JSON.parse(sessionStorage.getItem('calc') ?? 'null');
+        if (calc) for (const [key, value] of Object.entries(calc)) this.setHidden(`calc_${key}`, String(value));
+      } catch {}
+
+      this.button.disabled = true;
+      this.button.setAttribute('aria-busy', 'true');
+      this.button.firstChild!.textContent = 'Odesílám… ';
+
+      try {
+        const res = await fetch(this.form.action, {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+          body: new URLSearchParams(new FormData(this.form) as unknown as Record<string, string>),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error ?? res.status);
+
+        track('form_submit', { placement: this.placement });
+        try {
+          sessionStorage.setItem('lead', JSON.stringify({ placement: this.placement, at: Date.now() }));
+        } catch {}
+        location.assign(data.redirect);
+      } catch (err) {
+        const invalid = String(err).includes('email');
+        this.showError(
+          invalid ? 'Tenhle e-mail nevypadá úplně správně. Zkontrolujte ho prosím.' : 'Odeslání se nepovedlo. Zkuste to prosím znovu za chvíli.',
+          invalid ? 'server_invalid' : 'network',
+        );
+        this.button.disabled = false;
+        this.button.removeAttribute('aria-busy');
+        this.button.firstChild!.textContent = `${this.button.dataset.label} `;
+      }
+    }
+  }
+
+  customElements.define('lead-form', LeadForm);
+</script>

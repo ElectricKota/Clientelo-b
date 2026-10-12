@@ -1,0 +1,99 @@
+---
+import { site } from '../site';
+const { metaPixelId } = site.analytics;
+---
+
+<consent-bar hidden>
+  <section
+    aria-label="Souhlas s cookies"
+    class="fixed inset-x-3 bottom-3 z-40 mx-auto max-w-xl rounded-2xl border border-line bg-surface p-4 shadow-(--shadow-card) sm:p-5"
+  >
+    <p class="text-sm text-ink-soft">
+      Pro měření návštěvnosti a vyhodnocení reklam bychom rádi použili cookies (Google Analytics{metaPixelId && ', Meta'}).
+      Bez souhlasu stránka funguje stejně. <a class="link" href="/ochrana-udaju#cookies">Podrobnosti</a>
+    </p>
+    <div class="mt-3 flex flex-wrap gap-2">
+      <button type="button" class="btn btn-secondary min-h-11 px-5 py-2 text-sm" data-consent="denied">Odmítnout</button>
+      <button type="button" class="btn btn-secondary min-h-11 px-5 py-2 text-sm" data-consent="granted">Přijmout</button>
+    </div>
+  </section>
+</consent-bar>
+
+<script is:inline define:vars={{ metaPixelId }}>
+  window.__metaPixelId = metaPixelId;
+</script>
+
+<script>
+  function loadMetaPixel(id: string) {
+    /* Oficiální Meta Pixel snippet, spouští se až po souhlasu. */
+    const w = window as any;
+    if (w.fbq) return;
+    const fbq: any = function (...args: unknown[]) {
+      fbq.callMethod ? fbq.callMethod(...args) : fbq.queue.push(args);
+    };
+    w.fbq = w._fbq = fbq;
+    fbq.push = fbq;
+    fbq.loaded = true;
+    fbq.version = '2.0';
+    fbq.queue = [];
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://connect.facebook.net/en_US/fbevents.js';
+    document.head.append(s);
+    fbq('init', id);
+    fbq('track', 'PageView');
+  }
+
+  function loadGa() {
+    const id = (window as any).__gaId;
+    if (!id || document.querySelector('script[data-ga]')) return;
+    const s = document.createElement('script');
+    s.async = true;
+    s.dataset.ga = '';
+    s.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
+    document.head.append(s);
+  }
+
+  function apply(value: string) {
+    const granted = value === 'granted';
+    window.gtag?.('consent', 'update', {
+      ad_storage: granted ? 'granted' : 'denied',
+      ad_user_data: granted ? 'granted' : 'denied',
+      ad_personalization: granted ? 'granted' : 'denied',
+      analytics_storage: granted ? 'granted' : 'denied',
+    });
+    const pixel = (window as any).__metaPixelId;
+    if (granted && pixel) loadMetaPixel(pixel);
+  }
+
+  class ConsentBar extends HTMLElement {
+    connectedCallback() {
+      let stored: string | null = null;
+      try {
+        stored = localStorage.getItem('consent');
+      } catch {}
+
+      // GA se načítá po vykreslení stránky; bez souhlasu běží v režimu bez cookies (Consent Mode v2).
+      const idle = (window as any).requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 1500));
+      addEventListener('load', () => idle(loadGa), { once: true });
+
+      if (stored) {
+        apply(stored);
+        return;
+      }
+      this.hidden = false;
+      this.addEventListener('click', (e) => {
+        const button = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-consent]');
+        if (!button) return;
+        const value = button.dataset.consent!;
+        try {
+          localStorage.setItem('consent', value);
+        } catch {}
+        apply(value);
+        window.track?.('consent', { value });
+        this.hidden = true;
+      });
+    }
+  }
+  customElements.define('consent-bar', ConsentBar);
+</script>

@@ -1,0 +1,170 @@
+---
+import { data, etfs, fmt, feeCost, calcDefaults } from '../data/etfs';
+
+interface Props {
+  variant: 'a' | 'b';
+}
+const { variant } = Astro.props;
+
+const byTicker = (t: string) => etfs.find((e) => e.ticker === t)!;
+const sp500 = etfs.filter((e) => e.category === 'sp500');
+const spy = byTicker('SPY');
+const voo = byTicker('VOO');
+const vooUcits = voo.ucits[0];
+const base = { initial: calcDefaults.initial, monthly: calcDefaults.monthly, years: calcDefaults.years, annualReturn: calcDefaults.annualReturn };
+const heroRows = [
+  { label: spy.ticker, ter: spy.ter, tone: 'bg-pine' },
+  { label: voo.ticker, ter: voo.ter, tone: 'bg-pine' },
+  { label: vooUcits.primary, ter: vooUcits.ter, tone: 'bg-gain' },
+  { label: 'Fond za 1,5 %', ter: calcDefaults.customTer, tone: 'bg-brick' },
+].map((r) => ({ ...r, cost: feeCost({ ...base, ter: r.ter }) }));
+const heroMax = Math.max(...heroRows.map((r) => r.cost));
+const asOf = fmt.date(data.asOf);
+---
+
+<section data-section="hero" aria-labelledby="hero-title" class="relative overflow-hidden pt-4 pb-16 sm:pt-10 sm:pb-24">
+  <div class="container-page grid items-center gap-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-16">
+    <div>
+      {
+        variant === 'a' ? (
+          <>
+            <p class="eyebrow">Porovnání ETF z NYSE · data k {asOf}</p>
+            <h1 id="hero-title" class="mt-4 text-display font-medium">
+              SPY, IVV, nebo VOO? <em class="text-brick not-italic sm:italic">Stejný index, jiný poplatek.</em>
+            </h1>
+            <p class="mt-6 max-w-xl text-lg text-ink-soft sm:text-xl">
+              Za 30 vteřin si spočítáte, kolik vás poplatky stojí za 10, 20 i 30 let. A zjistíte, co z toho si z Česka opravdu koupíte. Většinu amerických ETF
+              vám totiž český broker nenabídne.
+            </p>
+          </>
+        ) : (
+          <>
+            <p class="eyebrow">Pro investory z Česka · data k {asOf}</p>
+            <h1 id="hero-title" class="mt-4 text-display font-medium">
+              VOO si z Česka nekoupíte. <em class="text-brick not-italic sm:italic">Tohle ano.</em>
+            </h1>
+            <p class="mt-6 max-w-xl text-lg text-ink-soft sm:text-xl">
+              Evropská regulace brání drobným investorům kupovat ETF registrovaná v USA. Ukážeme vám 10 nejpopulárnějších ETF z NYSE vedle jejich evropských
+              dvojčat, která u brokera opravdu najdete.
+            </p>
+          </>
+        )
+      }
+
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+        {
+          variant === 'a' ? (
+            <a href="#kalkulacka" class="btn btn-primary" data-track="cta_click" data-placement="hero" data-label="calculator">
+              Spočítat můj rozdíl
+            </a>
+          ) : (
+            <a href="#porovnani" class="btn btn-primary" data-track="cta_click" data-placement="hero" data-label="compare">
+              Ukázat evropská dvojčata
+            </a>
+          )
+        }
+        <a href="#formular" class="btn btn-secondary" data-track="cta_click" data-placement="hero" data-label="form">
+          Chci rovnou PDF tahák zdarma
+        </a>
+      </div>
+
+      <ul class="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-soft" aria-label="Co dostanete">
+        {
+          ['10 ETF z NYSE se zdroji', 'Evropské alternativy pro Čechy', 'Bez registrace u brokera'].map((t) => (
+            <li class="flex items-center gap-2">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="10" fill="#dcefe6" />
+                <path d="m6 10.5 2.5 2.5L14 7.5" fill="none" stroke="#23704f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              {t}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    {
+      variant === 'a' ? (
+        <figure class="card relative p-6 sm:p-8" aria-labelledby="hero-fig-cap">
+          <figcaption id="hero-fig-cap" class="text-sm text-ink-soft">
+            Poplatky za {calcDefaults.years} let při vkladu {fmt.czk(base.initial)} a {fmt.czk(base.monthly)} měsíčně (model, výnos {base.annualReturn} % ročně)
+          </figcaption>
+          <ul class="mt-6 space-y-5">
+            {heroRows.map((r) => (
+              <li>
+                <div class="flex items-baseline justify-between gap-3">
+                  <span class="font-semibold">
+                    {r.label} <span class="num text-sm font-normal text-ink-soft">TER {fmt.ter(r.ter)}</span>
+                  </span>
+                  <span class="num font-serif text-xl text-pine">{fmt.czk(r.cost)}</span>
+                </div>
+                <div class="mt-2 h-2 rounded-full bg-sand" aria-hidden="true">
+                  <div class:list={['h-full rounded-full', r.tone]} style={`width:${Math.max((r.cost / heroMax) * 100, 1.5).toFixed(1)}%`} />
+                </div>
+              </li>
+            ))}
+          </ul>
+          <p class="mt-6 border-t border-line pt-4 text-sm text-ink-soft">
+            {vooUcits.primary} je evropská obdoba {voo.ticker}, kterou koupíte u evropských brokerů.
+          </p>
+        </figure>
+      ) : (
+        <figure class="relative grid gap-3" aria-labelledby="hero-fig-cap-b">
+          <figcaption id="hero-fig-cap-b" class="sr-only">
+            Srovnání {voo.ticker} a jeho evropské obdoby {vooUcits.primary}
+          </figcaption>
+          <div class="card p-6 opacity-90">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="font-serif text-3xl text-pine">{voo.ticker}</p>
+                <p class="text-sm text-ink-soft">
+                  {voo.name} · {voo.exchange}
+                </p>
+              </div>
+              <span class="rounded-full bg-brick-50 px-3 py-1 text-xs font-semibold text-brick">Registrace v USA</span>
+            </div>
+            <p class="mt-4 flex items-center gap-2 text-sm font-semibold text-brick">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 20 20">
+                <path d="m6 6 8 8m0-8-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              </svg>
+              Drobný investor z EU ho u brokera obvykle nekoupí
+            </p>
+          </div>
+          <div class="flex justify-center" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" class="text-pine">
+              <path d="M12 4v16m0 0-6-6m6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </div>
+          <div class="card border-gain/40 p-6 ring-2 ring-mint">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="font-serif text-3xl text-pine">{vooUcits.primary}</p>
+                <p class="text-sm text-ink-soft">
+                  {vooUcits.name} · LSE, Xetra
+                </p>
+              </div>
+              <span class="rounded-full bg-mint px-3 py-1 text-xs font-semibold text-gain">UCITS · Irsko</span>
+            </div>
+            <dl class="num mt-4 grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <dt class="text-ink-soft">Index</dt>
+                <dd class="font-semibold">S&amp;P 500</dd>
+              </div>
+              <div>
+                <dt class="text-ink-soft">TER</dt>
+                <dd class="font-semibold">{fmt.ter(vooUcits.ter)}</dd>
+              </div>
+            </dl>
+            <p class="mt-4 flex items-center gap-2 text-sm font-semibold text-gain">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 20 20">
+                <path d="m5 10.5 3 3 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              Koupíte u evropských brokerů
+            </p>
+          </div>
+          <p class="text-center text-sm text-ink-soft">+ dalších {etfs.length - 1} ETF z NYSE a jejich obdoby ({sp500.map((e) => e.ticker).join(', ')}…)</p>
+        </figure>
+      )
+    }
+  </div>
+</section>

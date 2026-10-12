@@ -1,0 +1,39 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../site';
+---
+
+<Base title={`Ochrana osobních údajů | ${site.brand}`} description="Jak ETF tahák zpracovává e-mail a cookies.">
+  <article class="container-page max-w-3xl py-10 sm:py-16">
+    <h1 class="text-4xl font-medium sm:text-5xl">Ochrana osobních údajů</h1>
+    <div class="mt-8 space-y-6 text-ink-soft [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:text-pine">
+      <p>
+        Správcem osobních údajů je {site.operator.name} (dále „my“). Kontakt: <a class="link" href={`mailto:${site.operator.email}`}>{site.operator.email}</a>.
+      </p>
+
+      <h2>Jaké údaje zpracováváme a proč</h2>
+      <p>
+        <strong class="text-ink">E-mail</strong> zadaný do formuláře používáme k zaslání ETF taháku a výpočtu z kalkulačky (plnění vaší žádosti) a k zasílání
+        čtvrtletní aktualizace dat, pokud odběr potvrdíte (souhlas). Spolu s e-mailem ukládáme technické údaje o původu návštěvy (např. parametry reklamní
+        kampaně) a hodnoty zadané do kalkulačky, abychom vám mohli poslat váš výpočet.
+      </p>
+      <p>Údaje uchováváme do odhlášení z odběru, nejdéle 3 roky od posledního otevření e-mailu. Neprodáváme je a nepředáváme třetím stranám k marketingu.</p>
+
+      <h2>Zpracovatelé</h2>
+      <p>Provoz webu zajišťuje Vercel Inc., e-maily rozesílá poskytovatel e-mailingové služby. Oba zpracovávají údaje jen podle našich pokynů.</p>
+
+      <h2 id="cookies">Cookies a měření</h2>
+      <p>
+        Bez vašeho souhlasu neukládáme žádné analytické ani reklamní cookies. Pokud souhlas udělíte, použijeme Google Analytics 4 (měření návštěvnosti) a Meta
+        Pixel (vyhodnocení reklam). Souhlas můžete kdykoli odvolat smazáním dat webu v prohlížeči; při další návštěvě se vás zeptáme znovu.
+      </p>
+
+      <h2>Vaše práva</h2>
+      <p>
+        Máte právo na přístup k údajům, jejich opravu, výmaz, omezení zpracování, přenositelnost a právo vznést námitku. Souhlas můžete kdykoli odvolat
+        odkazem v každém e-mailu. Stížnost můžete podat u Úřadu pro ochranu osobních údajů (uoou.gov.cz).
+      </p>
+      <p><a href="/" class="link">← Zpět na úvod</a></p>
+    </div>
+  </article>
+</Base>
