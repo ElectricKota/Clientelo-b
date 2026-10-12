@@ -1,0 +1,125 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-serif: var(--font-newsreader), Georgia, serif;
+  --font-sans: var(--font-geist), system-ui, sans-serif;
+
+  /* Paleta: teplý papír, hluboká jehličnatá zelená (stabilita, peníze), cihlový akcent pro akce. */
+  --color-paper: #f7f4ee;
+  --color-sand: #efe8dc;
+  --color-surface: #ffffff;
+  --color-line: #e0d9cc;
+  --color-ink: #10302b;
+  --color-ink-soft: #4a5b57;
+  --color-pine: #0f3d36;
+  --color-pine-700: #154d44;
+  --color-mint: #dcefe6;
+  --color-gain: #23704f;
+  --color-brick: #b93f0e;
+  --color-brick-700: #9a330a;
+  --color-brick-50: #fbebe2;
+  --color-focus: #1d5fd1;
+
+  --text-display: clamp(2.25rem, 1.6rem + 3.2vw, 4rem);
+  --text-display--line-height: 1.04;
+  --text-display--letter-spacing: -0.02em;
+
+  --radius-card: 1.25rem;
+  --shadow-card: 0 1px 0 rgb(16 48 43 / 0.04), 0 12px 32px -16px rgb(16 48 43 / 0.18);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 1.5rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-serif text-pine;
+    text-wrap: balance;
+    font-optical-sizing: auto;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
+    border-radius: 0.375rem;
+  }
+
+  ::selection {
+    background: var(--color-mint);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .eyebrow {
+    @apply text-sm font-semibold tracking-wide text-brick uppercase;
+  }
+
+  .btn {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 py-3 text-base font-semibold no-underline transition-colors;
+  }
+
+  .btn-primary {
+    @apply bg-brick text-white hover:bg-brick-700;
+  }
+
+  .btn-secondary {
+    @apply border border-pine/25 bg-transparent text-pine hover:border-pine hover:bg-surface;
+  }
+
+  .card {
+    @apply rounded-(--radius-card) border border-line bg-surface shadow-(--shadow-card);
+  }
+
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .link {
+    @apply font-medium text-pine underline decoration-pine/30 underline-offset-4 hover:decoration-pine;
+  }
+
+  .sr-only-focusable:not(:focus) {
+    @apply sr-only;
+  }
+}
+
+/* Sekce pod ohybem se vykreslí až při přiblížení (rychlejší první vykreslení). */
+.defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
