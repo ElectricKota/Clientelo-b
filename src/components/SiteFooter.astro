@@ -1,9 +1,9 @@
 ---
-import { data, etfs, fmt } from '../data/etfs';
+import { data, etfs, fmt, issuerShort } from '../data/etfs';
 import { site } from '../site';
 
 const sources = [
-  ...new Map(etfs.map((e) => [new URL(e.sourceUrl).hostname, { label: e.issuer, url: e.sourceUrl }])).values(),
+  ...new Map(etfs.map((e) => [new URL(e.sourceUrl).hostname, { label: issuerShort(e.issuer), url: e.sourceUrl }])).values(),
   { label: 'justETF (UCITS fondy)', url: 'https://www.justetf.com/cz/' },
 ];
 ---

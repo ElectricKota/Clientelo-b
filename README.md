@@ -130,7 +130,7 @@ Všechny události jdou přes [`src/scripts/track.ts`](src/scripts/track.ts) do 
 | Událost | Kdy | Parametry |
 |---|---|---|
 | `lp_view` | načtení stránky | `path`, UTM, `fbclid`/`gclid` |
-| `section_view` | sekce viditelná ze 40 % | `section` (hero, trust, calculator, compare, offer, method, faq) |
+| `section_view` | sekce dorazí do středu obrazovky | `section` (hero, trust, calculator, compare, offer, method, faq) |
 | `scroll_depth` | 25 / 50 / 75 / 100 % | `percent` |
 | `cta_click` | jakékoli CTA | `placement` (hero, header, card, sticky), `label` |
 | `calc_interact` | první změna v kalkulačce | `field` |

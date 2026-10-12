@@ -48,7 +48,10 @@ const issuerHost = (url: string) => new URL(url).hostname.replace(/^www\./, '');
                   <h3 id={`etf-${e.ticker}`} class="font-serif text-3xl leading-none">
                     {e.ticker}
                   </h3>
-                  <p class="mt-2 text-sm text-ink-soft">{e.name}</p>
+                  <p class="mt-2 text-sm text-ink-soft">
+                    {e.name}
+                    {e.formerTicker && ` (dříve ${e.formerTicker})`}
+                  </p>
                 </div>
                 <span class="shrink-0 rounded-full bg-sand px-3 py-1 text-xs font-semibold">{categories.find((c) => c.id === e.category)?.label}</span>
               </header>

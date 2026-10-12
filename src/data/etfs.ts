@@ -69,6 +69,15 @@ export const fmt = {
   date: (iso: string) => new Intl.DateTimeFormat('cs-CZ', { day: 'numeric', month: 'numeric', year: 'numeric' }).format(new Date(iso)),
 };
 
+/** Krátký název emitenta pro zobrazení (State Street, iShares, Vanguard, Schwab). */
+export function issuerShort(issuer: string) {
+  if (/state street/i.test(issuer)) return 'State Street';
+  if (/ishares|blackrock/i.test(issuer)) return 'iShares';
+  if (/vanguard/i.test(issuer)) return 'Vanguard';
+  if (/schwab/i.test(issuer)) return 'Schwab';
+  return issuer;
+}
+
 export const policyLabel = (p: Ucits['policy']) => ({ accumulating: 'akumulační', distributing: 'distribuční', none: 'bez výplat' })[p];
 
 export function fact(id: string) {

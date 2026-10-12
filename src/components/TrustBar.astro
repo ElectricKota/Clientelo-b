@@ -1,13 +1,13 @@
 ---
-import { data, etfs, fmt } from '../data/etfs';
+import { data, etfs, fmt, issuerShort } from '../data/etfs';
 
-const issuers = [...new Set(etfs.map((e) => e.issuer))];
+const issuers = [...new Set(etfs.map((e) => issuerShort(e.issuer))), 'justETF'];
 ---
 
 <section data-section="trust" aria-label="Odkud data jsou" class="border-y border-line bg-surface/60">
   <div class="container-page flex flex-col gap-3 py-5 text-sm sm:flex-row sm:items-center sm:justify-between">
     <p class="text-ink-soft">
-      <span class="font-semibold text-ink">Data přímo od emitentů:</span>
+      <span class="font-semibold text-ink">Zdroje dat:</span>
       {issuers.join(' · ')}
     </p>
     <p class="text-ink-soft">

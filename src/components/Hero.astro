@@ -7,7 +7,6 @@ interface Props {
 const { variant } = Astro.props;
 
 const byTicker = (t: string) => etfs.find((e) => e.ticker === t)!;
-const sp500 = etfs.filter((e) => e.category === 'sp500');
 const spy = byTicker('SPY');
 const voo = byTicker('VOO');
 const vooUcits = voo.ucits[0];
@@ -162,7 +161,7 @@ const asOf = fmt.date(data.asOf);
               Koupíte u evropských brokerů
             </p>
           </div>
-          <p class="text-center text-sm text-ink-soft">+ dalších {etfs.length - 1} ETF z NYSE a jejich obdoby ({sp500.map((e) => e.ticker).join(', ')}…)</p>
+          <p class="text-center text-sm text-ink-soft">+ dalších {etfs.length - 1} ETF z NYSE a jejich obdoby ({etfs.filter((e) => e.ticker !== voo.ticker).slice(0, 4).map((e) => e.ticker).join(', ')}…)</p>
         </figure>
       )
     }

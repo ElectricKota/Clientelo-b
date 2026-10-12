@@ -1,15 +1,15 @@
 ---
-import { etfs, fmt, feeCost, futureValue, calcDefaults } from '../data/etfs';
+import { etfs, fmt, feeCost, futureValue, calcDefaults, issuerShort } from '../data/etfs';
 import LeadForm from './LeadForm.astro';
 
 // Porovnáváme fondy na stejný index (S&P 500): rozdíl ve výsledku dělá jen poplatek.
 const sp500 = etfs.filter((e) => e.category === 'sp500');
 const rows = [
-  ...sp500.map((e) => ({ id: e.ticker, label: e.ticker, sub: `${e.issuer} · NYSE Arca`, ter: e.ter, kind: 'us' })),
+  ...sp500.map((e) => ({ id: e.ticker, label: e.ticker, sub: `${issuerShort(e.issuer)} · USA`, ter: e.ter, kind: 'us' })),
   ...[...new Map(sp500.flatMap((e) => e.ucits).filter((u) => u.policy === 'accumulating').map((u) => [u.primary, u])).values()].map((u) => ({
     id: u.primary,
     label: u.primary,
-    sub: 'UCITS · koupíte z ČR',
+    sub: 'UCITS · Evropa',
     ter: u.ter,
     kind: 'ucits',
   })),

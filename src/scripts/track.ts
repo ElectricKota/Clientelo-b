@@ -70,7 +70,8 @@ function observeSections() {
         }
       }
     },
-    { threshold: 0.4 },
+    // Sekce delší než obrazovka nikdy nedosáhnou vysokého prahu, proto měříme vstup do středového pásu obrazovky.
+    { rootMargin: '-35% 0px -35% 0px' },
   );
   document.querySelectorAll<HTMLElement>('[data-section]').forEach((el) => io.observe(el));
 }
