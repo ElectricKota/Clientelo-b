@@ -19,6 +19,7 @@ interface Props {
 }
 const { variant, title, description } = Astro.props;
 const url = new URL('/', Astro.site).href;
+// Varianta B je jen pro reklamu: vlastní canonical + noindex, aby nekonkurovala úvodní stránce ve vyhledávání.
 
 const jsonLd = [
   {
@@ -50,7 +51,7 @@ const jsonLd = [
 ];
 ---
 
-<Base variant={variant} title={title} description={description} canonicalPath="/" jsonLd={jsonLd}>
+<Base variant={variant} title={title} description={description} noindex={variant !== 'a'} jsonLd={jsonLd}>
   <a
     slot="header-cta"
     href="#formular"

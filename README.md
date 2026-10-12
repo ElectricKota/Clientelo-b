@@ -70,7 +70,7 @@ Navíc **osobní výpočet z kalkulačky** do e-mailu a **čtvrtletní aktualiza
 - **CTA:** Zjistit více
 - **Navázání:** hero s přesně tímto nadpisem, vizuál VOO → VUAA a jako první sekce porovnání fondů.
 
-Obě varianty jsou samostatně vygenerované statické stránky, takže nevzniká žádné přepisování obsahu JavaScriptem ani CLS. `/voo` má `canonical` na `/` a není v sitemapě.
+Obě varianty jsou samostatně vygenerované statické stránky, takže nevzniká žádné přepisování obsahu JavaScriptem ani CLS. `/voo` má `noindex` a není v sitemapě, aby nekonkurovala úvodní stránce ve vyhledávání.
 
 ---
 
@@ -174,7 +174,7 @@ Všechny události jdou přes [`src/scripts/track.ts`](src/scripts/track.ts) do 
 
 ### Výsledky Lighthouse (mobil, lokální build bez komprese)
 
-Výkon 98 · Přístupnost 100 · Best practices 100 · SEO 100. LCP 2,1 s, CLS 0, TBT 0 ms, celkem 173 kB. Na Vercelu s kompresí Brotli bývají čísla lepší.
+Produkce (https://clientelo-b.vercel.app, Lighthouse 12, mobil): **Výkon 99 · Přístupnost 100 · Best practices 100 · SEO 100**. FCP 1,5 s, LCP 1,7 s, CLS 0, TBT 0 ms, celkem 171 kB (HTML 22 kB s Brotli).
 
 ### Výkon
 - Statické HTML, CSS vložené přímo do stránky (~15 kB), JS jen pro kalkulačku, formulář a měření.

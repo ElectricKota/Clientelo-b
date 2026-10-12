@@ -25,7 +25,9 @@ const {
   jsonLd = [],
 } = Astro.props;
 
-const canonical = new URL(canonicalPath ?? Astro.url.pathname, Astro.site);
+// Build ve formátu `file` vrací /voo.html, Vercel (cleanUrls) ale servíruje /voo.
+const cleanPath = (canonicalPath ?? Astro.url.pathname).replace(/index\.html$/, '').replace(/\.html$/, '');
+const canonical = new URL(cleanPath, Astro.site);
 const ogImage = new URL('/og.png', Astro.site);
 const hasTrackers = Boolean(site.analytics.gaId || site.analytics.metaPixelId);
 ---
