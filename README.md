@@ -183,6 +183,15 @@ Produkce (https://clientelo-b.vercel.app, Lighthouse 12, mobil): **Výkon 99 · 
 - Hashovaná aktiva s `immutable` cache, serif ve statických řezech (~23 kB) a bez preloadu, aby neblokoval první vykreslení.
 - Žádné obrázky v hero; vizuály jsou HTML/CSS a inline SVG.
 
+### Animace a mikrointerakce (bez knihoven, převážně čisté CSS)
+- **Reveal při scrollu:** CSS scroll-driven animace (`animation-timeline: view()`) s odstupňováním přes `--i`. Prohlížeče bez podpory zobrazí obsah rovnou. Nadpis v hero se neanimuje, aby se neoddálil LCP.
+- **Filtrování fondů:** filtr je čisté CSS (`:has()`), změnu zabaluje View Transitions API (`view-transition-class: etf-card`). Karty plynule odjedou, přijedou a přeskupí se.
+- **FAQ:** plynulé otevírání i zavírání `<details>` přes `::details-content` a `interpolate-size: allow-keywords`.
+- **Tlačítka:** primární se zvedne a přejede přes něj lesk, sekundární se zespodu vyplní, šipky popojedou, při stisku se tlačítko zmáčkne. Hover je jen na zařízeních s myší (`@media (hover: hover)`).
+- **Volby (chips):** plynulý přechod barvy, stínu a pozice při hoveru i výběru.
+- **Focus ring:** značková barva, kopíruje zaoblení prvku a nabíhá krátkou animací. V tmavých sekcích (`.on-dark`) se přepne na světlou variantu.
+- Vše respektuje `prefers-reduced-motion`.
+
 ### Přístupnost (WCAG 2.2 AA)
 - Odkaz pro přeskočení na obsah, landmarky, jedna `h1`, logická hierarchie nadpisů.
 - Vše ovladatelné klávesnicí, výrazný `:focus-visible`, cíle alespoň 44 × 44 px.

@@ -36,7 +36,7 @@ const display = (f: (typeof fields)[number]) => (f.unit === 'Kč' ? fmt.czk(f.va
 
 <section id="kalkulacka" data-section="calculator" aria-labelledby="kalk-title" class="scroll-mt-4 py-16 sm:py-24">
   <div class="container-page">
-    <div class="max-w-2xl">
+    <div class="reveal max-w-2xl">
       <p class="eyebrow">Kalkulačka poplatků</p>
       <h2 id="kalk-title" class="mt-3 text-3xl leading-tight sm:text-5xl">Stejný index, jiná cena. Kolik vás to bude stát?</h2>
       <p class="mt-4 text-lg text-ink-soft">
@@ -45,7 +45,7 @@ const display = (f: (typeof fields)[number]) => (f.unit === 'Kč' ? fmt.czk(f.va
     </div>
 
     <fee-calculator class="mt-10 grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-8">
-      <form class="card space-y-7 p-6 sm:p-8" aria-label="Parametry výpočtu" onsubmit="return false">
+      <form class="card reveal space-y-7 p-6 sm:p-8" aria-label="Parametry výpočtu" onsubmit="return false">
         {
           fields.map((f) => (
             <div>
@@ -79,8 +79,8 @@ const display = (f: (typeof fields)[number]) => (f.unit === 'Kč' ? fmt.czk(f.va
             {
               [5, 7, 9].map((r) => (
                 <label class="relative">
-                  <input type="radio" name="annualReturn" value={r} checked={r === calcDefaults.annualReturn} class="peer sr-only" />
-                  <span class="num flex min-h-11 cursor-pointer items-center justify-center rounded-full border border-line bg-paper text-sm font-semibold peer-checked:border-pine peer-checked:bg-pine peer-checked:text-white peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus">
+                  <input type="radio" name="annualReturn" value={r} checked={r === calcDefaults.annualReturn} class="sr-only" />
+                  <span class="chip num">
                     {r} %
                   </span>
                 </label>
@@ -111,7 +111,7 @@ const display = (f: (typeof fields)[number]) => (f.unit === 'Kč' ? fmt.czk(f.va
         </div>
       </form>
 
-      <div class="card flex flex-col p-6 sm:p-8">
+      <div class="card reveal flex flex-col p-6 sm:p-8" style="--i:1">
         <p class="sr-only" aria-live="polite" data-live></p>
         <div>
           <p class="text-ink-soft">
@@ -161,7 +161,7 @@ const display = (f: (typeof fields)[number]) => (f.unit === 'Kč' ? fmt.czk(f.va
           výnosy nejsou zárukou budoucích. TER fondů podle emitentů k uvedenému datu.
         </p>
 
-        <div class="mt-8 rounded-2xl bg-pine p-5 text-white sm:p-6">
+        <div class="on-dark mt-8 rounded-2xl bg-pine p-5 text-white sm:p-6">
           <p class="font-serif text-xl leading-snug text-white sm:text-2xl">Pošleme vám výpočet a tahák, kde tyhle ETF z Česka koupíte.</p>
           <LeadForm placement="calculator" button="Poslat výpočet" tone="dark" class="mt-4" />
         </div>

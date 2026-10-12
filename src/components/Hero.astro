@@ -55,10 +55,16 @@ const asOf = fmt.date(data.asOf);
           variant === 'a' ? (
             <a href="#kalkulacka" class="btn btn-primary" data-track="cta_click" data-placement="hero" data-label="calculator">
               Spočítat můj rozdíl
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 20 20" fill="none">
+                <path d="M4 10h11m0 0-4.5-4.5M15 10l-4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
             </a>
           ) : (
             <a href="#porovnani" class="btn btn-primary" data-track="cta_click" data-placement="hero" data-label="compare">
               Ukázat evropská dvojčata
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 20 20" fill="none">
+                <path d="M4 10h11m0 0-4.5-4.5M15 10l-4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
             </a>
           )
         }
@@ -84,7 +90,7 @@ const asOf = fmt.date(data.asOf);
 
     {
       variant === 'a' ? (
-        <figure class="card relative p-6 sm:p-8" aria-labelledby="hero-fig-cap">
+        <figure class="card intro relative p-6 sm:p-8" aria-labelledby="hero-fig-cap">
           <figcaption id="hero-fig-cap" class="text-sm text-ink-soft">
             Poplatky za {calcDefaults.years} let při vkladu {fmt.czk(base.initial)} a {fmt.czk(base.monthly)} měsíčně (model, výnos {base.annualReturn} % ročně)
           </figcaption>
@@ -108,7 +114,7 @@ const asOf = fmt.date(data.asOf);
           </p>
         </figure>
       ) : (
-        <figure class="relative grid gap-3" aria-labelledby="hero-fig-cap-b">
+        <figure class="intro relative grid gap-3" aria-labelledby="hero-fig-cap-b">
           <figcaption id="hero-fig-cap-b" class="sr-only">
             Srovnání {voo.ticker} a jeho evropské obdoby {vooUcits.primary}
           </figcaption>

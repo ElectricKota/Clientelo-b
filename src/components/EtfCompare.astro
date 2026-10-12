@@ -13,7 +13,7 @@ const issuerHost = (url: string) => new URL(url).hostname.replace(/^www\./, '');
 
 <section id="porovnani" data-section="compare" aria-labelledby="compare-title" class="scroll-mt-4 bg-sand/60 py-16 sm:py-24">
   <div class="container-page etf-compare">
-    <div class="max-w-3xl">
+    <div class="reveal max-w-3xl">
       <p class="eyebrow">Porovnání fondů</p>
       <h2 id="compare-title" class="mt-3 text-3xl leading-tight sm:text-5xl">{etfs.length} nejpopulárnějších ETF z NYSE. A jejich evropská dvojčata.</h2>
       <p class="mt-4 text-lg text-ink-soft">
@@ -21,14 +21,14 @@ const issuerHost = (url: string) => new URL(url).hostname.replace(/^www\./, '');
       </p>
     </div>
 
-    <fieldset class="mt-8">
+    <fieldset class="reveal mt-8">
       <legend class="sr-only">Filtrovat podle typu fondu</legend>
       <div class="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0">
         {
           [{ id: 'all', label: 'Vše' }, ...present].map((c) => (
             <label class="shrink-0">
-              <input type="radio" name="etf-filter" value={c.id} checked={c.id === 'all'} class="peer sr-only" />
-              <span class="flex min-h-11 cursor-pointer items-center rounded-full border border-line bg-surface px-4 text-sm font-semibold whitespace-nowrap peer-checked:border-pine peer-checked:bg-pine peer-checked:text-white peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus">
+              <input type="radio" name="etf-filter" value={c.id} checked={c.id === 'all'} class="sr-only" />
+              <span class="chip">
                 {c.label}
               </span>
             </label>
@@ -40,9 +40,9 @@ const issuerHost = (url: string) => new URL(url).hostname.replace(/^www\./, '');
 
     <ul class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" role="list">
       {
-        etfs.map((e) => (
-          <li class="etf-card" data-cat={e.category}>
-            <article class="card flex h-full flex-col p-6" aria-labelledby={`etf-${e.ticker}`}>
+        etfs.map((e, i) => (
+          <li class="etf-card reveal" data-cat={e.category} style={`--i:${i % 3};view-transition-name:etf-${e.ticker.toLowerCase()};view-transition-class:etf-card`}>
+            <article class="card card-hover flex h-full flex-col p-6" aria-labelledby={`etf-${e.ticker}`}>
               <header class="flex items-start justify-between gap-3">
                 <div>
                   <h3 id={`etf-${e.ticker}`} class="font-serif text-3xl leading-none">
@@ -107,7 +107,7 @@ const issuerHost = (url: string) => new URL(url).hostname.replace(/^www\./, '');
                   data-placement="card"
                   data-label={e.ticker}
                 >
-                  Jak ho najít u brokera a jak se daní<span aria-hidden="true"> →</span>
+                  Jak ho najít u brokera a jak se daní<span aria-hidden="true" class="arrow ml-1">→</span>
                   <span class="sr-only">: {e.ticker}</span>
                 </a>
                 <p class="mt-2 text-xs text-ink-soft">
@@ -136,8 +136,24 @@ const issuerHost = (url: string) => new URL(url).hostname.replace(/^www\./, '');
 <script>
   import { track } from '../scripts/track';
 
-  const root = document.querySelector('.etf-compare');
+  const root = document.querySelector<HTMLElement>('.etf-compare');
   const count = root?.querySelector('[data-count]');
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+
+  // Filtr funguje čistě přes CSS. Kde je k dispozici View Transitions API, změnu výběru
+  // zabalíme do přechodu, takže karty plynule odjedou, přijedou a přeskupí se.
+  root?.addEventListener('click', (e) => {
+    const input = e.target as HTMLInputElement;
+    if (input.name !== 'etf-filter' || !document.startViewTransition || reduceMotion.matches) return;
+    if (root.dataset.transitioning) return;
+    e.preventDefault();
+    root.dataset.transitioning = '1';
+    const transition = document.startViewTransition(() => {
+      input.checked = true;
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    transition.finished.finally(() => delete root.dataset.transitioning);
+  });
   root?.addEventListener('change', (e) => {
     const input = e.target as HTMLInputElement;
     if (input.name !== 'etf-filter') return;

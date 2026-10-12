@@ -18,7 +18,11 @@
   --color-brick: #b93f0e;
   --color-brick-700: #9a330a;
   --color-brick-50: #fbebe2;
-  --color-focus: #1d5fd1;
+  /* Focus ring: na světlém pozadí jehličnatá zelená, v tmavých sekcích se přepíná na broskvovou (.on-dark). */
+  --color-focus: #0f3d36;
+  --color-focus-halo: rgb(15 61 54 / 0.16);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 
   --text-display: clamp(2.25rem, 1.6rem + 3.2vw, 4rem);
   --text-display--line-height: 1.04;
@@ -31,6 +35,8 @@
 @layer base {
   html {
     color-scheme: light;
+    /* Umožní animovat výšku na `auto` (FAQ). */
+    interpolate-size: allow-keywords;
     -webkit-text-size-adjust: 100%;
     scroll-padding-top: 1.5rem;
   }
@@ -61,9 +67,20 @@
   }
 
   :focus-visible {
-    outline: 3px solid var(--color-focus);
+    outline: 2.5px solid var(--color-focus);
     outline-offset: 3px;
-    border-radius: 0.375rem;
+    border-radius: 0.5rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :focus-visible {
+      animation: focus-ring 0.28s var(--ease-out-soft);
+    }
+  }
+
+  .on-dark {
+    --color-focus: #f4b393;
+    --color-focus-halo: rgb(244 179 147 / 0.25);
   }
 
   ::selection {
@@ -90,19 +107,147 @@
   }
 
   .btn {
-    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 py-3 text-base font-semibold no-underline transition-colors;
+    @apply relative isolate inline-flex min-h-12 items-center justify-center gap-2 overflow-hidden rounded-full px-6 py-3 text-base font-semibold no-underline select-none;
+    transition:
+      transform 0.25s var(--ease-out-soft),
+      box-shadow 0.25s var(--ease-out-soft),
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
   }
 
+  .btn svg {
+    transition: transform 0.25s var(--ease-out-soft);
+  }
+
+  .btn:active {
+    transform: translateY(0) scale(0.97);
+    transition-duration: 0.08s;
+  }
+
+  .btn:disabled {
+    @apply cursor-progress opacity-80;
+  }
+
+  /* Primární: jemné zvednutí, sytější stín a lesk, který přejede přes tlačítko. */
   .btn-primary {
-    @apply bg-brick text-white hover:bg-brick-700;
+    @apply bg-brick text-white;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.18),
+      0 10px 24px -14px rgb(185 63 14 / 0.75);
   }
 
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.28) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 0.7s var(--ease-out-soft);
+  }
+
+  /* Sekundární: zelená výplň „vyteče“ zespodu. */
   .btn-secondary {
-    @apply border border-pine/25 bg-transparent text-pine hover:border-pine hover:bg-surface;
+    @apply border border-pine/25 bg-transparent text-pine;
+  }
+
+  .btn-secondary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--color-pine);
+    border-radius: inherit;
+    transform: translateY(101%);
+    transition: transform 0.35s var(--ease-out-soft);
+  }
+
+  @media (hover: hover) {
+    .btn-primary:hover:not(:disabled) {
+      @apply bg-brick-700;
+      transform: translateY(-2px);
+      box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.18),
+        0 16px 30px -14px rgb(185 63 14 / 0.85);
+    }
+
+    .btn-primary:hover::after {
+      transform: translateX(120%);
+    }
+
+    .btn-secondary:hover {
+      @apply border-pine text-white;
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px -16px rgb(15 61 54 / 0.6);
+    }
+
+    .btn-secondary:hover::before {
+      transform: translateY(0);
+    }
+
+    .btn:hover svg {
+      transform: translateX(3px);
+    }
+  }
+
+  /* Volby (filtr fondů, výnos v kalkulačce): radio skryté, stylujeme sousední štítek. */
+  .chip {
+    @apply flex min-h-11 cursor-pointer items-center justify-center rounded-full border border-line bg-surface px-4 text-sm font-semibold whitespace-nowrap;
+    transition:
+      background-color 0.3s var(--ease-out-soft),
+      border-color 0.3s var(--ease-out-soft),
+      color 0.3s var(--ease-out-soft),
+      box-shadow 0.3s var(--ease-out-soft),
+      transform 0.2s var(--ease-out-soft);
+  }
+
+  @media (hover: hover) {
+    .chip:hover {
+      @apply border-pine/50 bg-mint/60;
+      transform: translateY(-1px);
+    }
+  }
+
+  :checked + .chip {
+    @apply border-pine bg-pine text-white;
+    box-shadow: 0 8px 18px -12px rgb(15 61 54 / 0.8);
+  }
+
+  :active + .chip {
+    transform: scale(0.96);
+  }
+
+  :focus-visible + .chip {
+    outline: 2.5px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :focus-visible + .chip {
+      animation: focus-ring 0.28s var(--ease-out-soft);
+    }
   }
 
   .card {
     @apply rounded-(--radius-card) border border-line bg-surface shadow-(--shadow-card);
+  }
+
+  .card-hover {
+    transition:
+      transform 0.35s var(--ease-out-soft),
+      box-shadow 0.35s var(--ease-out-soft),
+      border-color 0.35s var(--ease-out-soft);
+  }
+
+  @media (hover: hover) {
+    .card-hover:hover {
+      @apply border-pine/25;
+      transform: translateY(-4px);
+      box-shadow:
+        0 1px 0 rgb(16 48 43 / 0.04),
+        0 24px 44px -22px rgb(16 48 43 / 0.32);
+    }
   }
 
   .num {
@@ -111,6 +256,22 @@
 
   .link {
     @apply font-medium text-pine underline decoration-pine/30 underline-offset-4 hover:decoration-pine;
+    transition:
+      text-decoration-color 0.2s ease,
+      text-underline-offset 0.2s ease;
+  }
+
+  .link:hover {
+    text-underline-offset: 6px;
+  }
+
+  .link .arrow {
+    display: inline-block;
+    transition: transform 0.25s var(--ease-out-soft);
+  }
+
+  .link:hover .arrow {
+    transform: translateX(4px);
   }
 
   .sr-only-focusable:not(:focus) {
@@ -118,8 +279,84 @@
   }
 }
 
-/* Sekce pod ohybem se vykreslí až při přiblížení (rychlejší první vykreslení). */
-.{
-  content-visibility: auto;
-  contain-intrinsic-size: auto 900px;
+@keyframes focus-ring {
+  from {
+    outline-offset: 9px;
+    outline-color: transparent;
+  }
+}
+
+/* ---------- Reveal při scrollu (CSS scroll-driven animace, bez JS) ----------
+   Prohlížeče bez podpory obsah zobrazí rovnou. `--i` posouvá začátek animace pro jemné odstupňování. */
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(36px) scale(0.985);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal both var(--ease-out-soft);
+      animation-timeline: view();
+      animation-range: entry calc(var(--i, 0) * 6%) entry calc(70% + var(--i, 0) * 6%);
+    }
+  }
+}
+
+/* Úvodní vizuál v hero: krátký nájezd po načtení (ne nadpis, aby se neodkládal LCP). */
+@media (prefers-reduced-motion: no-preference) {
+  .intro {
+    animation: reveal 0.9s var(--ease-out-soft) 0.15s both;
+  }
+}
+
+/* ---------- FAQ: plynulé otevírání a zavírání <details> ---------- */
+details::details-content {
+  height: 0;
+  overflow: clip;
+  opacity: 0;
+  transition:
+    height 0.4s var(--ease-out-soft),
+    opacity 0.3s ease,
+    content-visibility 0.4s allow-discrete;
+}
+
+details[open]::details-content {
+  height: auto;
+  opacity: 1;
+}
+
+/* ---------- View Transitions při filtrování fondů ---------- */
+::view-transition-group(*.etf-card) {
+  animation-duration: 0.5s;
+  animation-timing-function: var(--ease-out-soft);
+}
+
+::view-transition-new(*.etf-card):only-child {
+  animation: vt-in 0.45s var(--ease-out-soft) 0.08s both;
+}
+
+::view-transition-old(*.etf-card):only-child {
+  animation: vt-out 0.25s ease both;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+}
+
+@keyframes vt-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.94);
+  }
+}
+
+@keyframes vt-out {
+  to {
+    opacity: 0;
+    transform: scale(0.94);
+  }
 }
