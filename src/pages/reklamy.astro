@@ -123,26 +123,24 @@ const host = new URL(Astro.site!).host.toUpperCase();
 
               <div class="reveal">
                 <h3 class="font-sans text-lg font-semibold">Texty a odkaz</h3>
-                <dl class="mt-4 space-y-4 text-sm">
-                  <div>
+                <dl class="mt-4 grid grid-cols-2 gap-4 text-sm">
+                  <div class="col-span-2">
                     <dt class="text-ink-soft">Primární text</dt>
                     <dd class="mt-1 text-base">{ad.primaryText}</dd>
                   </div>
-                  <div class="grid grid-cols-2 gap-4">
-                    <div>
-                      <dt class="text-ink-soft">Nadpis</dt>
-                      <dd class="mt-1 text-base font-semibold">{ad.headline}</dd>
-                    </div>
-                    <div>
-                      <dt class="text-ink-soft">Popis</dt>
-                      <dd class="mt-1 text-base">{ad.description}</dd>
-                    </div>
+                  <div>
+                    <dt class="text-ink-soft">Nadpis</dt>
+                    <dd class="mt-1 text-base font-semibold">{ad.headline}</dd>
                   </div>
                   <div>
+                    <dt class="text-ink-soft">Popis</dt>
+                    <dd class="mt-1 text-base">{ad.description}</dd>
+                  </div>
+                  <div class="col-span-2">
                     <dt class="text-ink-soft">Tlačítko</dt>
                     <dd class="mt-1 text-base">{ad.cta}</dd>
                   </div>
-                  <div>
+                  <div class="col-span-2">
                     <dt class="text-ink-soft">Cílová URL s UTM</dt>
                     <dd class="mt-1 rounded-xl bg-surface p-3 font-mono text-xs break-all">{url}</dd>
                   </div>
