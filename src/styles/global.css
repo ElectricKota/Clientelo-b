@@ -317,7 +317,8 @@
 }
 
 /* Úvodní vizuál v hero: krátký nájezd po načtení (ne nadpis, aby se neodkládal LCP). */
-@media (prefers-reduced-motion: no-preference) {
+/* Jen na desktopu: na mobilu by skrytý obsah první obrazovky zhoršil Speed Index a LCP. */
+@media (prefers-reduced-motion: no-preference) and (min-width: 64rem) {
   .intro {
     animation: intro 0.9s var(--ease-out-soft) 0.15s both;
   }
