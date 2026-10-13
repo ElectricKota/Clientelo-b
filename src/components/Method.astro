@@ -30,8 +30,8 @@ const points = [
     </div>
     <ul class="grid gap-x-10 gap-y-8 sm:grid-cols-2" role="list">
       {
-        points.map((p, i) => (
-          <li class="reveal border-t-2 border-pine pt-4" style={`--i:${i % 2}`}>
+        points.map((p) => (
+          <li class="reveal border-t-2 border-pine pt-4">
             <h3 class="font-sans text-lg font-semibold">{p.title}</h3>
             <p class="mt-2 text-ink-soft">{p.text}</p>
           </li>

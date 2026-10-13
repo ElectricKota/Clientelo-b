@@ -286,29 +286,47 @@
   }
 }
 
-/* ---------- Reveal při scrollu (CSS scroll-driven animace, bez JS) ----------
-   Prohlížeče bez podpory obsah zobrazí rovnou. `--i` posouvá začátek animace pro jemné odstupňování. */
-@keyframes reveal {
-  from {
-    opacity: 0;
-    transform: translateY(36px) scale(0.985);
-  }
+/* ---------- Reveal: spouští IntersectionObserver (src/scripts/reveal.ts) ----------
+   Třídu .js-reveal nastaví inline skript v <head> jen tam, kde IO funguje a není omezený pohyb.
+   Bez JS nebo při chybě skriptu je obsah normálně vidět. */
+.js-reveal .reveal {
+  opacity: 0;
+  transform: translate3d(0, 2rem, 0) scale(0.985);
+  transition:
+    opacity 0.7s ease,
+    transform 0.9s var(--ease-out-soft);
+  transition-delay: var(--reveal-delay, 0ms);
 }
 
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .reveal {
-      animation: reveal both var(--ease-out-soft);
-      animation-timeline: view();
-      animation-range: entry calc(var(--i, 0) * 6%) entry calc(70% + var(--i, 0) * 6%);
-    }
-  }
+.js-reveal .reveal[data-reveal='left'] {
+  transform: translate3d(-2rem, 0, 0);
+}
+
+.js-reveal .reveal[data-reveal='scale'] {
+  transform: scale(0.94);
+}
+
+.js-reveal .reveal.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* Okamžité zobrazení (např. karty odkryté filtrem, ty animuje View Transition). */
+.js-reveal .reveal.reveal-instant {
+  transition: none;
 }
 
 /* Úvodní vizuál v hero: krátký nájezd po načtení (ne nadpis, aby se neodkládal LCP). */
 @media (prefers-reduced-motion: no-preference) {
   .intro {
-    animation: reveal 0.9s var(--ease-out-soft) 0.15s both;
+    animation: intro 0.9s var(--ease-out-soft) 0.15s both;
+  }
+}
+
+@keyframes intro {
+  from {
+    opacity: 0;
+    transform: translateY(2.25rem) scale(0.985);
   }
 }
 

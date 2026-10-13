@@ -59,6 +59,17 @@ const hasTrackers = Boolean(site.analytics.gaId || site.analytics.metaPixelId);
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
 
+    <script is:inline>
+      // Reveal animace jen tam, kde má smysl. Pojistka: když se skript nenačte, obsah se po 3 s ukáže.
+      (function (d) {
+        if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        d.classList.add('js-reveal');
+        setTimeout(function () {
+          if (!window.__revealReady) d.classList.remove('js-reveal');
+        }, 3000);
+      })(document.documentElement);
+    </script>
+
     <Font cssVariable="--font-geist" preload={[{ subset: 'latin', style: 'normal' }]} />
     <Font cssVariable="--font-newsreader" />
 
@@ -123,6 +134,7 @@ const hasTrackers = Boolean(site.analytics.gaId || site.analytics.metaPixelId);
     {hasTrackers && <ConsentBar />}
 
     <script>
+      import '../scripts/reveal';
       import '../scripts/track';
     </script>
   </body>

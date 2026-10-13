@@ -23,7 +23,7 @@ export default defineConfig({
   devToolbar: { enabled: false },
   integrations: [
     sitemap({
-      filter: (page) => !/\/(dekujeme|voo|og|tahak)$/.test(page),
+      filter: (page) => !/\/(dekujeme|voo|og|tahak|reklamy)$|\/reklama\//.test(page),
     }),
     leadDevApi(),
   ],
