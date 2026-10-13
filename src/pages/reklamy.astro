@@ -76,7 +76,7 @@ const host = new URL(Astro.site!).host.toUpperCase();
                     <p class="text-xs text-ink-soft">Sponzorováno</p>
                   </div>
                 </div>
-                <p class="px-4 pb-4 text-[0.95rem] leading-relaxed">{ad.primaryText}</p>
+                <p class="px-4 pb-4 text-[0.95rem] leading-relaxed whitespace-pre-line">{ad.primaryText}</p>
                 <Image src={img.feed} alt={`Vizuál reklamy ${ad.id.toUpperCase()} ve formátu 4:5`} widths={[400, 640, 1080]} sizes="(min-width: 1280px) 540px, (min-width: 768px) 50vw, 100vw" class="w-full" loading="lazy" />
                 <div class="flex items-center justify-between gap-4 bg-sand/70 p-4">
                   <div class="min-w-0">
@@ -126,7 +126,7 @@ const host = new URL(Astro.site!).host.toUpperCase();
                 <dl class="mt-4 grid grid-cols-2 gap-4 text-sm">
                   <div class="col-span-2">
                     <dt class="text-ink-soft">Primární text</dt>
-                    <dd class="mt-1 text-base">{ad.primaryText}</dd>
+                    <dd class="mt-1 text-base whitespace-pre-line">{ad.primaryText}</dd>
                   </div>
                   <div>
                     <dt class="text-ink-soft">Nadpis</dt>

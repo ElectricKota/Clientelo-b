@@ -61,23 +61,34 @@ Hotové vizuály ve formátech feed 4:5 (1080 × 1350) a stories 9:16 (1080 × 1
 
 **Cílení:** Česko, 25–40 let, primárně mobil. Zájmy: investování, ETF, osobní finance a publikum podobné brokerům. Cíl kampaně: Leady (událost `Lead`).
 
-| | **A: Poplatky** (racionální úhel) | **B: VOO paradox** (zvědavost) |
+**Principy kreativy:**
+- **Hook v první vteřině:** konkrétní číslo, nebo otázka, kterou si cílovka sama klade.
+- **Vizuální vybočení z feedu:** účtenka na tmavém pozadí, chat místo „reklamního“ layoutu.
+- **Jedna emoce na reklamu:** averze ke ztrátě, nebo frustrace s rychlým řešením.
+- **Značka a upozornění až dole,** aby nebraly místo hooku.
+
+| | **A: Účtenka** (averze ke ztrátě) | **B: Chat** (frustrace a řešení) |
 |---|---|---|
 | Vstupní stránka | `/` | `/voo` |
-| Nadpis reklamy | Stejný index, jiný poplatek | VOO si z Česka nekoupíte. Tohle ano. |
-| Primární text | „SPY, IVV i VOO kopírují úplně stejný index. Přesto vás jeden z nich za 20 let stojí na poplatcích víc. Spočítejte si za 30 vteřin, kolik to dělá u vás, a co z nich si z Česka vůbec koupíte.“ | „VOO doporučuje skoro každý americký youtuber. Jenže jako drobný investor z Česka ho u brokera nekoupíte. Ukážeme vám, co si koupit místo něj, a dalších 9 populárních ETF z NYSE s jejich evropskými dvojčaty.“ |
-| Vizuál | Graf poplatků za 20 let: SPY, VOO, VUAA a fond za 1,5 % (skutečná čísla z kalkulačky) | Vyhledávání „VOO → Nenalezeno“, šipka na kartu VUAA „Koupíte u evropských brokerů“ |
-| CTA | Zjistit více | Zjistit více |
-| `utm_content` | `a_poplatky` | `b_voo` |
+| Hook ve vizuálu | „**331 205 Kč** za 20 let. *A ani o tom nevíte.*“ | „Proč mi broker nenajde VOO? 🤨“ |
+| Vizuál | Papírová účtenka poplatků za 20 let (VOO 7 340 Kč, SPY 23 015 Kč, fond 1,5 % **331 205 Kč** zakroužkováno), tmavé pozadí | Konverzace kamarádů: otázka → „Z EU ho nekoupíš, regulace PRIIPs“ → „Kup VUAA“ + karta fondu → „A SCHD? VT?“ → „Tady máš tahák na všech 10 👇“ |
+| Primární text | „331 205 Kč. Tolik může za 20 let spolknout poplatek fondu 1,5 % ročně. Ve výpisu ho nevidíte, strhává se potichu z hodnoty fondu. ETF na stejný index (S&P 500) vyjde v tom samém modelu na 7 340 Kč. Spočítejte si za 30 vteřin svou vlastní účtenku 👇“ | „„Proč mi broker nenajde VOO?“ Není to chyba aplikace. Americká ETF jako VOO, SPY nebo VT si drobný investor z EU kvůli regulaci PRIIPs většinou nekoupí. Na stejné indexy ale existují evropská dvojčata. Připravili jsme převodník 10 nejpopulárnějších ETF z NYSE na jejich evropské verze. Zdarma 👇“ |
+| Nadpis / popis | Spočítejte si svou účtenku / Kalkulačka poplatků a PDF tahák zdarma | Co koupit místo VOO / 10 ETF z NYSE a jejich evropská dvojčata |
+| `utm_content` | `a_uctenka` | `b_chat` |
+
+Čísla v reklamě A se počítají ze stejných dat a stejného modelu jako kalkulačka. Konverzace v reklamě B je označená jako ilustrační.
 
 ### Jak první obrazovka navazuje na slib reklamy
 
-- **Stejný nadpis.** H1 opakuje text z vizuálu: „SPY, IVV, nebo VOO? *Stejný index, jiný poplatek.*“, resp. „VOO si z Česka nekoupíte. *Tohle ano.*“, včetně kurzívy v cihlové barvě.
-- **Stejný vizuál.**
-  - Na desktopu je vpravo od nadpisu velká verze grafu poplatků, resp. karty VOO → VUAA.
-  - Na mobilu je pod nadpisem kompaktní verze, aby byla vidět bez scrollu.
-- **Okamžitě jasné, co návštěvník získá.** Blok „Co získáte zdarma“ (kalkulačka poplatků, 10 ETF s evropskými dvojčaty, PDF tahák na 8 stran) je na mobilu v první obrazovce.
-- **Hlavní tlačítko plní slib reklamy.** „Spočítat můj rozdíl“ vede do kalkulačky, „Ukázat evropská dvojčata“ na porovnání. Varianta B má porovnání hned za úvodem.
+- **A:**
+  - H1 je doslova hook reklamy: „331 205 Kč za 20 let. *A ani o tom nevíte.*“
+  - Pod nadpisem je **stejná účtenka** (komponenta [`Receipt.astro`](src/components/Receipt.astro) sdílená s reklamou).
+  - Hlavní tlačítko má stejný text jako reklama („Spočítat svou účtenku“) a vede do kalkulačky.
+- **B:**
+  - H1 odpovídá na otázku z chatu: „VOO si z Česka nekoupíte. *Tohle ano.*“
+  - Pod nadpisem je stejný přechod VOO (nekoupíte) → VUAA (koupíte).
+  - Tlačítko vede na porovnání všech 10 fondů, které chat slibuje.
+- **Obě:** blok „Co získáte zdarma“ (kalkulačka, 10 ETF s evropskými dvojčaty, PDF tahák na 8 stran) je na mobilu v první obrazovce.
 
 Obě varianty jsou samostatně vygenerované statické stránky, takže nevzniká žádné přepisování obsahu JavaScriptem ani CLS. `/voo` má `noindex` a není v sitemapě, aby nekonkurovala úvodní stránce ve vyhledávání.
 
@@ -285,4 +296,4 @@ Projekt vznikl s AI agentem Claude Code. Podrobnosti jsou ve složce [`ai-log/`]
 - [pokyny agentovi](ai-log/01-zadani-a-pokyny.md) v pořadí, jak šly, a co z nich vzniklo,
 - [zadání výzkumného subagenta](ai-log/02-subagent-data.md) pro sběr dat a jak se jeho výstup ověřil (subagent mimo jiné opravil můj mylný předpoklad o daňovém stropu 40 mil. Kč),
 - [kontrola výstupu](ai-log/03-kontrola-vystupu.md): automatické testy, Lighthouse a ruční průchody v prohlížeči,
-- [14 konkrétních chyb agenta](ai-log/04-chyby-agenta.md) s tím, jak se na ně přišlo, a commity s opravou.
+- [15 konkrétních chyb agenta](ai-log/04-chyby-agenta.md) s tím, jak se na ně přišlo, a commity s opravou.

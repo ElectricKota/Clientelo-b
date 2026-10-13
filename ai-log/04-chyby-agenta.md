@@ -18,10 +18,12 @@ Konkrétní případy, kdy výstup agenta nebyl správně. U každého je, jak s
 | 12 | **Snímky mobilu nebyly mobilní:** headless Chrome nejde zúžit pod ~500 px, takže náhled první obrazovky byl oříznutý. Pak v iframu chyběly prvky s úvodní animací. | Agent si vygenerované PNG prohlédl | Iframe 390 px + ořez a vypnutí animací přes `--force-prefers-reduced-motion` (`f9c40a5`) |
 | 13 | **Formulář reálně neukládal leady:** bez Ecomailu skončily jen v logu funkce. README přitom popisovalo double opt-in, jako by fungoval. | Kontrola podle mého checklistu („formulář uloží lead“) | Privátní Vercel Blob + export do CSV, README upraveno na skutečný stav |
 | 14 | **Odhad konverze bez zdroje:** README uvádělo „Unbounce kolem 6–7 %“ bez odkazu a odhad 8–12 % byl spíš optimistický. | Kontrola podle checklistu, dohledání reportu | Odkaz na Unbounce CBR 2024 (medián 6,6 %, mobil ~8 % horší) a přepočítaný odhad |
+| 15 | **Reklamy bez hooku:** první verze reklam byly zmenšené výřezy z webu (graf, karta fondu, logo nahoře). Technicky v pořádku, ale nic, co by zastavilo scroll. | Moje hodnocení („reklamy jsou o ničem“). Agent to sám nepoznal, protože kontroloval rozměry a texty, ne účinek. | Nové koncepty Účtenka a Chat a hero A přepsané na hook reklamy |
 
 ## Ponaučení pro další práci s agenty
 
 - **„Funguje to“ ověřovat chováním,** ne kompilací. Body 2, 9, 10 a 13 by bez kliknutí v prohlížeči nebo testu proti checklistu prošly.
 - **Hromadné úpravy textu (`sed`) jsou rizikové.** Po každé je potřeba diff zkontrolovat (bod 5).
 - **Tvrzení o světě nechat ověřit samostatným krokem se zdrojem.** Subagent opravil i můj vlastní mylný předpoklad o daňovém stropu.
+- **Kvalitu kreativy agent sám neposoudí.** Kontroloval, že reklama „sedí“ (rozměry, texty, data), ne jestli zaujme. Kreativu je potřeba hodnotit člověkem, ideálně proti reálným datům z A/B testu (bod 15).
 - **Akce mimo repozitář** (OAuth, úložiště, účty) nechat agenta vždy potvrdit u člověka.

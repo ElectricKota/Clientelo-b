@@ -46,3 +46,21 @@ Pokyny jsou v pořadí, v jakém jsem je zadával (zkráceně, ale věcně přes
 - Odhad konverze v README neměl ověřený zdroj.
 
 Opravy: privátní Vercel Blob (po mém souhlasu), tahle složka a ověřený benchmark Unbounce 2024 s přepočtem odhadu.
+
+## 6. Reklamy podruhé
+
+> Ty reklamy jsou o ničem a vůbec nezaujmou. Doporuč nějaký skill na generování reklamy a předělej to podle něj.
+
+**Výstup:** agent nejdřív prohledal katalog skillů a pluginů a doporučil tři:
+- „Social Media Skills“ (`hook-writer`, `lead-magnets-and-funnels`, `story-writer`),
+- „Marketing“ od Anthropicu,
+- „Hyper Marketing“ (`ad-creative-generation`, vyžaduje účet u služby Hyper).
+
+Pluginy se instalují mimo session, takže je nemohl hned spustit. Uvedl to otevřeně a reklamy předělal podle principů, na kterých tyto skilly stojí.
+
+Diagnóza původních reklam podle agenta:
+- vypadaly jako výřez z webu, ne jako příspěvek ve feedu,
+- nejsilnější číslo bylo schované ve čtvrtém řádku,
+- nadpis byl konstatování bez napětí a chyběla emoce.
+
+Nové koncepty: **A „Účtenka“** (hook „331 205 Kč za 20 let. A ani o tom nevíte.“) a **B „Chat“** (nativní konverzace „Proč mi broker nenajde VOO?“). Hero varianty A agent přepsal tak, aby opakovala hook i účtenku z reklamy.

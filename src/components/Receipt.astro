@@ -1,0 +1,216 @@
+---
+// „Účtenka“ s poplatky za N let. Stejný vizuál používá reklama A i hero stránky, aby první
+// obrazovka přesně navazovala na reklamu. Rozměry jsou v em, velikost se řídí font-size obalu.
+import { etfs, fmt, feeCost, calcDefaults } from '../data/etfs';
+
+interface Props {
+  /** Základní velikost písma účtenky (např. '15px' na webu, '30px' v reklamě). */
+  size?: string;
+  /** Kompaktní verze bez hlavičky a čárového kódu (mobil). */
+  compact?: boolean;
+  class?: string;
+}
+
+const { size = '15px', compact = false, class: className } = Astro.props;
+
+const byTicker = (t: string) => etfs.find((e) => e.ticker === t)!;
+const base = { initial: calcDefaults.initial, monthly: calcDefaults.monthly, years: calcDefaults.years, annualReturn: calcDefaults.annualReturn };
+const rows = [
+  { label: byTicker('VOO').ticker, note: 'ETF', ter: byTicker('VOO').ter },
+  { label: byTicker('SPY').ticker, note: 'ETF', ter: byTicker('SPY').ter },
+  { label: 'Fond', note: 'běžný podílový', ter: calcDefaults.customTer, hot: true },
+].map((r) => ({ ...r, cost: feeCost({ ...base, ter: r.ter }) }));
+const cheapest = rows[0];
+const priciest = rows[rows.length - 1];
+const diff = priciest.cost - cheapest.cost;
+const terLabel = (ter: number) => `${ter.toLocaleString('cs-CZ', { maximumFractionDigits: 4 })} %`;
+---
+
+<figure class:list={['receipt m-0', compact && 'receipt--compact', className]} style={`font-size:${size}`} aria-label={`Modelová účtenka poplatků za ${base.years} let`}>
+  <div class="receipt-paper">
+    {
+      !compact && (
+        <header class="receipt-head">
+          <p class="receipt-title">Účtenka za {base.years} let investování</p>
+          <p class="receipt-meta">
+            {fmt.czk(base.initial)} + {fmt.czk(base.monthly)}/měs. · {base.annualReturn} % p. a.
+          </p>
+        </header>
+      )
+    }
+    <ul class="receipt-rows">
+      {
+        rows.map((r) => (
+          <li class:list={['receipt-row', r.hot && 'is-hot']}>
+            <span class="receipt-label">
+              {r.label} <small>TER {terLabel(r.ter)}</small>
+            </span>
+            <span class="receipt-dots" aria-hidden="true" />
+            <span class="receipt-cost">{fmt.czk(r.cost)}</span>
+            {r.hot && (
+              <svg class="receipt-circle" viewBox="0 0 300 80" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M18 44C20 18 92 8 160 9c74 1 128 10 128 33 0 25-70 33-146 31C68 71 10 64 16 40c4-14 30-24 64-28" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+              </svg>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+    <p class="receipt-total">
+      <span class="receipt-total-label">Rozdíl</span>
+      <span class="receipt-dots" aria-hidden="true"></span>
+      <strong>{fmt.czk(diff)}</strong>
+    </p>
+    {!compact && <div class="receipt-barcode" aria-hidden="true" />}
+    <p class="receipt-foot">{compact ? `${base.years} let · ${fmt.czk(base.initial)} + ${fmt.czk(base.monthly)}/měs. · model` : 'Modelový výpočet. Minulé výnosy nejsou zárukou budoucích.'}</p>
+  </div>
+</figure>
+
+<style>
+  .receipt {
+    filter: drop-shadow(0 1.2em 1.6em rgb(16 48 43 / 0.16)) drop-shadow(0 0.1em 0.15em rgb(16 48 43 / 0.08));
+  }
+
+  .receipt-paper {
+    --z: 0.55em;
+    position: relative;
+    padding: 1.9em 1.6em 1.6em;
+    background: #fffdf8;
+    color: #1d2a27;
+    font-family: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.35;
+    /* Zubaté okraje účtenky nahoře i dole. */
+    mask:
+      conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / calc(2 * var(--z)) 51% repeat-x,
+      conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / calc(2 * var(--z)) 51% repeat-x;
+  }
+
+  .receipt--compact .receipt-paper {
+    padding: 1.3em 1.2em 1.1em;
+  }
+
+  .receipt-head {
+    text-align: center;
+    padding-bottom: 0.9em;
+    border-bottom: 0.12em dashed #c9c2b4;
+  }
+
+  .receipt-title {
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .receipt-meta {
+    margin-top: 0.3em;
+    font-size: 0.82em;
+    color: #5d6966;
+  }
+
+  .receipt-rows {
+    display: grid;
+    gap: 0.75em;
+    padding: 1em 0;
+  }
+
+  .receipt--compact .receipt-rows {
+    padding-top: 0;
+    gap: 0.55em;
+  }
+
+  .receipt-row,
+  .receipt-total {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+  }
+
+  .receipt-label {
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .receipt-label small {
+    font-size: 0.78em;
+    font-weight: 400;
+    color: #5d6966;
+  }
+
+  .receipt-dots {
+    flex: 1;
+    min-width: 1em;
+    border-bottom: 0.14em dotted #b9b1a2;
+    transform: translateY(-0.3em);
+  }
+
+  .receipt-cost {
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .receipt-row.is-hot .receipt-cost {
+    color: var(--color-brick);
+  }
+
+  .receipt-circle {
+    position: absolute;
+    right: -0.9em;
+    top: -0.75em;
+    width: 8.6em;
+    height: 2.7em;
+    color: var(--color-brick);
+    overflow: visible;
+  }
+
+  .receipt-total {
+    padding-top: 0.85em;
+    border-top: 0.12em dashed #c9c2b4;
+    font-size: 1.12em;
+  }
+
+  .receipt-total-label {
+    text-transform: uppercase;
+  }
+
+  .receipt-total strong {
+    color: var(--color-brick);
+    white-space: nowrap;
+  }
+
+  .receipt-barcode {
+    height: 2.6em;
+    margin: 1.2em 12% 0;
+    background: repeating-linear-gradient(
+      90deg,
+      #1d2a27 0 0.12em,
+      transparent 0.12em 0.3em,
+      #1d2a27 0.3em 0.36em,
+      transparent 0.36em 0.5em,
+      #1d2a27 0.5em 0.72em,
+      transparent 0.72em 0.86em
+    );
+  }
+
+  .receipt-foot {
+    margin-top: 0.8em;
+    text-align: center;
+    font-size: 0.72em;
+    color: #5d6966;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .receipt-circle path {
+      stroke-dasharray: 520;
+      stroke-dashoffset: 520;
+      animation: receipt-draw 0.9s 0.9s var(--ease-out-soft) forwards;
+    }
+  }
+
+  @keyframes receipt-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+</style>

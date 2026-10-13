@@ -1,9 +1,13 @@
 ---
 // Předlohy reklamních vizuálů. `npm run og` je vyfotí do src/assets/reklamy/*.png
-// (feed 1080×1350, stories 1080×1920). Vizuál záměrně opakuje hero dané varianty stránky.
+// (feed 1080×1350, stories 1080×1920 s bezpečnými zónami nahoře 250 px a dole 340 px).
+//
+// A „Účtenka“: hook = konkrétní číslo ztráty (averze ke ztrátě) + účtenka jako vizuální vybočení z feedu.
+// B „Chat“: nativně vypadající konverzace, hook = frustrace, kterou cílovka zná („broker mi VOO nenajde“).
 import { Font } from 'astro:assets';
 import '../../styles/global.css';
-import { data, etfs, fmt, feeCost, calcDefaults } from '../../data/etfs';
+import Receipt from '../../components/Receipt.astro';
+import { etfs, fmt, feeCost, calcDefaults } from '../../data/etfs';
 import { site } from '../../site';
 
 export function getStaticPaths() {
@@ -16,18 +20,20 @@ const story = format === 'story';
 const width = 1080;
 const height = story ? 1920 : 1350;
 
-const byTicker = (t: string) => etfs.find((e) => e.ticker === t)!;
-const spy = byTicker('SPY');
-const voo = byTicker('VOO');
-const vuaa = voo.ucits[0];
 const base = { initial: calcDefaults.initial, monthly: calcDefaults.monthly, years: calcDefaults.years, annualReturn: calcDefaults.annualReturn };
-const rows = [
-  { label: spy.ticker, ter: spy.ter, tone: 'bg-pine' },
-  { label: voo.ticker, ter: voo.ter, tone: 'bg-pine' },
-  { label: vuaa.primary, ter: vuaa.ter, tone: 'bg-gain' },
-  { label: 'Fond za 1,5 %', ter: calcDefaults.customTer, tone: 'bg-brick' },
-].map((r) => ({ ...r, cost: feeCost({ ...base, ter: r.ter }) }));
-const max = Math.max(...rows.map((r) => r.cost));
+const loss = feeCost({ ...base, ter: calcDefaults.customTer });
+const vuaa = etfs.find((e) => e.ticker === 'VOO')!.ucits[0];
+
+type Bubble = { from: 'them' | 'me'; text: string } | { from: 'me'; card: 'vuaa' | 'link' } | { from: 'them'; typing: true };
+const chat: Bubble[] = [
+  { from: 'them', text: 'Proč mi broker nenajde VOO? 🤨' },
+  { from: 'me', text: 'Z EU ho jako drobnej investor nekoupíš. Regulace PRIIPs.' },
+  { from: 'me', text: 'Kup VUAA. Stejnej S&P 500, jen evropská verze 👇' },
+  { from: 'me', card: 'vuaa' },
+  { from: 'them', text: 'A SCHD? VT? 😅' },
+  { from: 'me', text: 'Tady máš tahák na všech 10 👇' },
+  { from: 'them', typing: true },
+];
 ---
 
 <!doctype html>
@@ -49,124 +55,121 @@ const max = Math.max(...rows.map((r) => r.cost));
     </style>
   </head>
   <body>
-    <div
-      class:list={['relative flex h-full flex-col bg-paper text-ink', story ? 'px-[88px] pt-[250px] pb-[340px]' : 'px-[80px] pt-[60px] pb-[52px]']}
-    >
-      <!-- jemná dekorace: velký rozostřený kruh v barvě značky -->
-      <div class="absolute -top-40 -right-40 size-[620px] rounded-full bg-mint opacity-70 blur-3xl" aria-hidden="true"></div>
+    {
+      variant === 'a' ? (
+        <div class:list={['relative flex h-full flex-col overflow-hidden bg-pine text-white', story ? 'px-[84px] pt-[250px] pb-[340px]' : 'px-[76px] pt-[64px] pb-[56px]']}>
+          <div class="absolute -top-56 -left-40 size-[760px] rounded-full bg-[#1d5c51] opacity-60 blur-3xl" aria-hidden="true" />
+          <div class="absolute -right-48 bottom-24 size-[620px] rounded-full bg-brick opacity-25 blur-3xl" aria-hidden="true" />
 
-      <header class="relative flex items-center justify-between">
-        <div class="flex items-center gap-4 font-serif text-[40px] font-semibold text-pine">
-          <svg width="56" height="56" viewBox="0 0 32 32" aria-hidden="true">
-            <rect width="32" height="32" rx="8" fill="#0f3d36"></rect>
-            <path d="M8 21.5 13.5 16l4 3.5L24 11" fill="none" stroke="#f7f4ee" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path>
-            <circle cx="24" cy="11" r="2.4" fill="#e9895c"></circle>
-          </svg>
-          {site.brand}
-        </div>
-        <span class="text-[26px] text-ink-soft">data k {fmt.date(data.asOf)}</span>
-      </header>
+          <h1 class="relative font-serif leading-[0.95] font-medium tracking-tight text-white">
+            <span class={`num block text-[#f4b393] ${story ? 'text-[168px]' : 'text-[150px]'}`}>{fmt.czk(loss)}</span>
+            <span class={`mt-4 block ${story ? 'text-[80px]' : 'text-[66px]'} leading-[1.05]`}>
+              za {base.years} let. <em class="text-[#f4b393]">A ani o tom nevíte.</em>
+            </span>
+          </h1>
 
-      {
-        variant === 'a' ? (
-          <>
-            <p class={`relative font-semibold tracking-wide text-brick uppercase ${story ? 'mt-24 text-[36px]' : 'mt-10 text-[30px]'}`}>
-              Poplatky za {calcDefaults.years} let
-            </p>
-            <h1 class={`relative mt-5 font-serif leading-[1.0] font-medium tracking-tight ${story ? 'text-[132px]' : 'text-[100px]'}`}>
-              Stejný index. <em class="text-brick">Jiný poplatek.</em>
-            </h1>
+          <div class={`relative mx-auto w-full ${story ? 'mt-20 max-w-[900px]' : 'mt-12 max-w-[900px]'}`}>
+            <Receipt size={story ? '32px' : '30px'} class="-rotate-2" />
+          </div>
 
-            <div class={`card relative ${story ? 'mt-20 p-14' : 'mt-9 px-12 py-9'}`}>
-              <p class="text-[26px] text-ink-soft">
-                {fmt.czk(base.initial)} + {fmt.czk(base.monthly)} měsíčně, {base.annualReturn} % ročně
+          <footer class="relative mt-auto flex items-end justify-between gap-8">
+            <div>
+              <p class="flex items-center gap-3 font-serif text-[34px] font-semibold">
+                <svg width="44" height="44" viewBox="0 0 32 32" aria-hidden="true">
+                  <rect width="32" height="32" rx="8" fill="#f7f4ee" />
+                  <path d="M8 21.5 13.5 16l4 3.5L24 11" fill="none" stroke="#0f3d36" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="24" cy="11" r="2.4" fill="#e9895c" />
+                </svg>
+                {site.brand}
               </p>
-              <ul class={story ? 'mt-10 space-y-10' : 'mt-5 space-y-5'}>
-                {rows.map((r) => (
-                  <li>
-                    <div class="flex items-baseline justify-between">
-                      <span class="text-[36px] font-semibold">
-                        {r.label} <span class="num text-[26px] font-normal text-ink-soft">TER {fmt.ter(r.ter)}</span>
-                      </span>
-                      <span class="num font-serif text-[48px] text-pine">{fmt.czk(r.cost)}</span>
-                    </div>
-                    <div class="mt-3 h-4 rounded-full bg-sand">
-                      <div class={`h-full rounded-full ${r.tone}`} style={`width:${Math.max((r.cost / max) * 100, 2).toFixed(1)}%`} />
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              <p class="mt-3 max-w-[520px] text-[17px] leading-snug text-white/60">Modelový výpočet, TER dle emitentů. Nejde o investiční doporučení.</p>
             </div>
-          </>
-        ) : (
-          <>
-            <h1 class={`relative font-serif leading-[1.0] font-medium tracking-tight ${story ? 'mt-24 text-[132px]' : 'mt-12 text-[100px]'}`}>
-              VOO si z Česka nekoupíte. <em class="text-brick">Tohle ano.</em>
-            </h1>
-
-            <div class={`relative ${story ? 'mt-20' : 'mt-10'}`}>
-              <div class="flex items-center gap-6 rounded-full border-2 border-line bg-surface px-10 py-7 text-[38px]">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#4a5b57" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
-                  <circle cx="11" cy="11" r="7" />
-                  <path d="m20 20-4-4" />
-                </svg>
-                <span class="font-semibold">VOO</span>
-                <span class="ml-auto flex items-center gap-3 rounded-full bg-brick-50 px-6 py-2 text-[28px] font-semibold text-brick">
-                  <svg width="28" height="28" viewBox="0 0 20 20" aria-hidden="true">
-                    <path d="m6 6 8 8m0-8-8 8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
-                  </svg>
-                  Nenalezeno
-                </span>
-              </div>
-
-              <div class="flex justify-center py-6" aria-hidden="true">
-                <svg width="56" height="56" viewBox="0 0 24 24" class="text-pine">
-                  <path d="M12 4v16m0 0-6-6m6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </div>
-
-              <div class={`card ring-4 ring-mint ${story ? "p-12" : "px-12 py-10"}`}>
-                <div class="flex items-start justify-between gap-6">
-                  <div>
-                    <p class="font-serif text-[88px] leading-none text-pine">{vuaa.primary}</p>
-                    <p class="mt-4 text-[28px] text-ink-soft">{vuaa.name}</p>
-                  </div>
-                  <span class="rounded-full bg-mint px-6 py-2 text-[26px] font-semibold text-gain">UCITS</span>
-                </div>
-                <div class="num mt-8 flex gap-4 text-[28px]">
-                  <span class="rounded-full bg-sand px-6 py-2">S&amp;P 500</span>
-                  <span class="rounded-full bg-sand px-6 py-2">TER {fmt.ter(vuaa.ter)}</span>
-                </div>
-                <p class="mt-8 flex items-center gap-3 text-[32px] font-semibold text-gain">
-                  <svg width="36" height="36" viewBox="0 0 20 20" aria-hidden="true">
-                    <path d="m5 10.5 3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
-                  </svg>
-                  Koupíte u evropských brokerů
-                </p>
-              </div>
-              <p class={`text-center text-[30px] text-ink-soft ${story ? "mt-8" : "mt-6"}`}>+ dalších {etfs.length - 1} ETF z NYSE a jejich evropská dvojčata</p>
-            </div>
-          </>
-        )
-      }
-
-      <footer class={`relative mt-auto ${story ? "" : "pt-8"}`}>
-        <div class={`flex items-center justify-between gap-8 rounded-full bg-pine pr-4 pl-12 text-white ${story ? 'py-4' : 'py-3'}`}>
-          <span class="text-[34px] font-semibold">{variant === 'a' ? 'Spočítejte si svůj rozdíl' : 'Zjistěte, co koupit místo VOO'}</span>
-          <span class="grid size-[88px] place-items-center rounded-full bg-brick">
-            <svg width="40" height="40" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-              <path d="M4 10h11m0 0-4.5-4.5M15 10l-4.5 4.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </span>
+            <span class="flex shrink-0 items-center gap-4 rounded-full bg-brick py-5 pr-6 pl-9 text-[32px] font-semibold">
+              Spočítat svou účtenku
+              <svg width="34" height="34" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M4 10h11m0 0-4.5-4.5M15 10l-4.5 4.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </footer>
         </div>
-        <p class="mt-4 text-[19px] leading-snug text-ink-soft">
-          {
-            variant === 'a'
-              ? 'Modelový výpočet, poplatky fondů (TER) dle emitentů. Minulé ani modelové výnosy nejsou zárukou budoucích. Nejde o investiční doporučení.'
-              : 'Ilustrační vyhledávání. Drobní investoři z EU obvykle nemohou kupovat ETF registrovaná v USA (PRIIPs). Nejde o investiční doporučení.'
-          }
-        </p>
-      </footer>
-    </div>
+      ) : (
+        <div class:list={['relative flex h-full flex-col bg-[#efeae2] text-ink', story ? 'pt-[200px] pb-[300px]' : '']}>
+          {/* Hlavička konverzace (obecný vzhled chatu, bez značky konkrétní aplikace) */}
+          <header class={`flex items-center gap-6 border-b border-black/5 bg-white/80 px-14 ${story ? 'py-8' : 'py-6'}`}>
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#10302b" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+              <path d="m15 5-7 7 7 7" />
+            </svg>
+            <span class="grid size-[84px] place-items-center rounded-full bg-[#c9d8d2] text-[36px] font-semibold text-pine">H</span>
+            <div class="leading-tight">
+              <p class="text-[36px] font-semibold">Honza</p>
+              <p class="text-[26px] text-ink-soft">online</p>
+            </div>
+          </header>
+
+          <ul class={`flex min-h-0 flex-1 flex-col overflow-hidden ${story ? 'gap-5 px-14 pt-12' : 'gap-4 px-12 pt-8'}`}>
+            {chat.map((b) =>
+              'typing' in b ? (
+                <li class="flex justify-start" aria-hidden="true">
+                  <span class="flex gap-2.5 rounded-[38px] rounded-tl-lg bg-white px-8 py-7">
+                    <span class="size-4 rounded-full bg-ink/30" />
+                    <span class="size-4 rounded-full bg-ink/45" />
+                    <span class="size-4 rounded-full bg-ink/30" />
+                  </span>
+                </li>
+              ) : 'card' in b ? (
+                <li class="flex justify-end">
+                  {b.card === 'vuaa' ? (
+                    <div class={`w-[640px] rounded-[34px] rounded-tr-lg bg-white shadow-[0_2px_0_rgb(0_0_0/0.06)] ${story ? 'p-7' : 'px-7 py-6'}`}>
+                      <div class="flex items-start justify-between">
+                        <p class={`font-serif leading-none text-pine ${story ? 'text-[76px]' : 'text-[64px]'}`}>{vuaa.primary}</p>
+                        <span class="rounded-full bg-mint px-5 py-1.5 text-[24px] font-semibold text-gain">UCITS</span>
+                      </div>
+                      <p class="mt-3 text-[25px] leading-snug text-ink-soft">{vuaa.name}</p>
+                      <p class="num mt-4 flex gap-3 text-[25px]">
+                        <span class="rounded-full bg-sand px-4 py-1">S&amp;P 500</span>
+                        <span class="rounded-full bg-sand px-4 py-1">TER {fmt.ter(vuaa.ter)}</span>
+                      </p>
+                    </div>
+                  ) : (
+                    <div class="w-[680px] overflow-hidden rounded-[34px] rounded-tr-lg bg-[#d6eadf]">
+                      <div class="bg-pine px-8 py-7 text-white">
+                        <p class="font-serif text-[46px] leading-tight">
+                          VOO si z Česka nekoupíte. <em class="text-[#f4b393]">Tohle ano.</em>
+                        </p>
+                      </div>
+                      <p class="px-8 py-5 text-[25px] text-ink-soft">ETF tahák · 10 ETF z NYSE a jejich evropská dvojčata</p>
+                    </div>
+                  )}
+                </li>
+              ) : (
+                <li class={`flex ${b.from === 'me' ? 'justify-end' : 'justify-start'}`}>
+                  <p
+                    class:list={[
+                      'max-w-[780px] px-9 leading-snug shadow-[0_2px_0_rgb(0_0_0/0.06)]',
+                      story ? 'py-6 text-[38px]' : 'py-5 text-[37px]',
+                      b.from === 'me' ? 'rounded-[38px] rounded-tr-lg bg-[#d6eadf]' : 'rounded-[38px] rounded-tl-lg bg-white',
+                    ]}
+                  >
+                    {b.text}
+                  </p>
+                </li>
+              ),
+            )}
+          </ul>
+
+          <footer class={`flex shrink-0 items-center justify-between gap-6 bg-pine text-white ${story ? 'mx-14 rounded-[48px] px-10 py-8' : 'mt-6 px-12 py-8'}`}>
+            <div>
+              <p class="font-serif text-[40px] leading-tight">Co koupit místo VOO?</p>
+              <p class="mt-1 text-[19px] text-white/60">Ilustrační konverzace. Nejde o investiční doporučení.</p>
+            </div>
+            <span class="grid size-[96px] shrink-0 place-items-center rounded-full bg-brick">
+              <svg width="42" height="42" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M4 10h11m0 0-4.5-4.5M15 10l-4.5 4.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </footer>
+        </div>
+      )
+    }
   </body>
 </html>
