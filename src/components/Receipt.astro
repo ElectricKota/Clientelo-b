@@ -200,7 +200,8 @@ const terLabel = (ter: number) => `${ter.toLocaleString('cs-CZ', { maximumFracti
     color: #5d6966;
   }
 
-  @media (prefers-reduced-motion: no-preference) {
+  /* Kreslení kroužku jen na desktopu: na mobilu je účtenka v první obrazovce a pozdní změna obrazu zhoršuje Speed Index. */
+  @media (prefers-reduced-motion: no-preference) and (min-width: 64rem) {
     .receipt-circle path {
       stroke-dasharray: 520;
       stroke-dashoffset: 520;
