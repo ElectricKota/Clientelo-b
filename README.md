@@ -3,7 +3,9 @@
 Landing page s porovnáním ETF obchodovaných na NYSE pro české drobné investory. Funguje jako lead magnet: návštěvník získá kalkulačku poplatků, porovnání fondů a výměnou za e-mail PDF tahák „ETF tahák 2026“.
 
 - **Produkce:** https://clientelo-b.vercel.app (varianta A), https://clientelo-b.vercel.app/voo (varianta B)
-- **Stack:** Astro 7 (statický výstup, pod kapotou Vite), Tailwind CSS 4, nativní Web Components (bez frameworku), Vercel Function pro příjem leadů
+- **Reklamy:** https://clientelo-b.vercel.app/reklamy (náhled obou verzí, texty, URL s UTM, navázání první obrazovky)
+- **Stack:** Astro 7 (statický výstup, pod kapotou Vite), Tailwind CSS 4, nativní Web Components (bez frameworku), Vercel Function pro příjem leadů, privátní Vercel Blob pro jejich uložení
+- **Práce s AI:** [`ai-log/`](ai-log/README.md): pokyny agentům, kontrola výstupu a konkrétní chyby agenta
 
 ---
 
@@ -47,28 +49,35 @@ Navíc **osobní výpočet z kalkulačky** do e-mailu a **čtvrtletní aktualiza
 ### Co přijde po odeslání
 
 1. **Okamžitě** stránka `/dekujeme` se stažením PDF. Návštěvník nečeká na e-mail, takže hodnotu dostane hned. Je tu i shrnutí jeho výpočtu, 3 další kroky a sdílení (WhatsApp, Facebook, nativní sdílení).
-2. **Do minuty** e-mail (double opt-in přes Ecomail) s odkazem na tahák a výpočtem.
-3. **Navazující sekvence** (doporučení): +2 dny daně, +5 dní chyby začátečníků, +9 dní výběr brokera. Pak čtvrtletní aktualizace.
+2. **Lead se uloží** do privátního Vercel Blob storu (region Frankfurt) i s UTM, variantou, umístěním formuláře a výpočtem. Export do CSV: `npm run leads`.
+3. **E-mail s tahákem a výpočtem** (double opt-in) je připravený pro Ecomail. Odesílat se začne po doplnění `ECOMAIL_API_KEY` a `ECOMAIL_LIST_ID`, viz [Proměnné prostředí](#proměnné-prostředí-vercel--settings--environment-variables). Do té doby návštěvník dostane PDF jen na děkovné stránce.
+4. **Navazující sekvence** (doporučení): +2 dny daně, +5 dní chyby začátečníků, +9 dní výběr brokera. Pak čtvrtletní aktualizace.
 
 ---
 
-## 2. Dvě verze reklamy (Meta / Instagram, 4:5 a 9:16)
+## 2. Dvě verze reklamy (Meta: Facebook + Instagram)
 
-### Reklama A: „Poplatky“ (racionální úhel) → `/`
+Hotové vizuály ve formátech feed 4:5 (1080 × 1350) a stories 9:16 (1080 × 1920), texty, cílení a URL s UTM jsou na stránce **[/reklamy](https://clientelo-b.vercel.app/reklamy)**. Tam je u každé reklamy i první obrazovka stránky na mobilu. Vizuály se renderují z [`src/pages/reklama/[id].astro`](src/pages/reklama/[id].astro) příkazem `npm run og` do `src/assets/reklamy/`. Texty a cílení jsou v [`src/data/ads.ts`](src/data/ads.ts).
 
-- **Vizuál:** tři sloupce SPY / IVV / VOO se stejným grafem indexu, pod nimi velké číslo rozdílu v poplatcích za 20 let.
-- **Primární text:** „SPY, IVV i VOO kopírují úplně stejný index. Přesto vás jeden z nich za 20 let stojí na poplatcích víc. Spočítejte si za 30 vteřin, kolik to dělá u vás, a co z nich si z Česka vůbec koupíte.“
-- **Nadpis:** Stejný index, jiný poplatek
-- **CTA:** Zjistit více
-- **Navázání:** hero „SPY, IVV, nebo VOO? Stejný index, jiný poplatek.“ a hned pod tím kalkulačka.
+**Cílení:** Česko, 25–40 let, primárně mobil. Zájmy: investování, ETF, osobní finance a publikum podobné brokerům. Cíl kampaně: Leady (událost `Lead`).
 
-### Reklama B: „VOO paradox“ (zvědavost) → `/voo`
+| | **A: Poplatky** (racionální úhel) | **B: VOO paradox** (zvědavost) |
+|---|---|---|
+| Vstupní stránka | `/` | `/voo` |
+| Nadpis reklamy | Stejný index, jiný poplatek | VOO si z Česka nekoupíte. Tohle ano. |
+| Primární text | „SPY, IVV i VOO kopírují úplně stejný index. Přesto vás jeden z nich za 20 let stojí na poplatcích víc. Spočítejte si za 30 vteřin, kolik to dělá u vás, a co z nich si z Česka vůbec koupíte.“ | „VOO doporučuje skoro každý americký youtuber. Jenže jako drobný investor z Česka ho u brokera nekoupíte. Ukážeme vám, co si koupit místo něj, a dalších 9 populárních ETF z NYSE s jejich evropskými dvojčaty.“ |
+| Vizuál | Graf poplatků za 20 let: SPY, VOO, VUAA a fond za 1,5 % (skutečná čísla z kalkulačky) | Vyhledávání „VOO → Nenalezeno“, šipka na kartu VUAA „Koupíte u evropských brokerů“ |
+| CTA | Zjistit více | Zjistit více |
+| `utm_content` | `a_poplatky` | `b_voo` |
 
-- **Vizuál:** screenshot vyhledávání „VOO“ v aplikaci brokera s výsledkem „nenalezeno“ a šipka na „VUAA“.
-- **Primární text:** „VOO doporučuje skoro každý americký youtuber. Jenže z Česka si ho jako drobný investor nekoupíte. Ukážeme vám, co koupit místo něj, a dalších 9 populárních ETF z NYSE s jejich evropskými dvojčaty.“
-- **Nadpis:** VOO si z Česka nekoupíte. Tohle ano.
-- **CTA:** Zjistit více
-- **Navázání:** hero s přesně tímto nadpisem, vizuál VOO → VUAA a jako první sekce porovnání fondů.
+### Jak první obrazovka navazuje na slib reklamy
+
+- **Stejný nadpis.** H1 opakuje text z vizuálu: „SPY, IVV, nebo VOO? *Stejný index, jiný poplatek.*“, resp. „VOO si z Česka nekoupíte. *Tohle ano.*“, včetně kurzívy v cihlové barvě.
+- **Stejný vizuál.**
+  - Na desktopu je vpravo od nadpisu velká verze grafu poplatků, resp. karty VOO → VUAA.
+  - Na mobilu je pod nadpisem kompaktní verze, aby byla vidět bez scrollu.
+- **Okamžitě jasné, co návštěvník získá.** Blok „Co získáte zdarma“ (kalkulačka poplatků, 10 ETF s evropskými dvojčaty, PDF tahák na 8 stran) je na mobilu v první obrazovce.
+- **Hlavní tlačítko plní slib reklamy.** „Spočítat můj rozdíl“ vede do kalkulačky, „Ukázat evropská dvojčata“ na porovnání. Varianta B má porovnání hned za úvodem.
 
 Obě varianty jsou samostatně vygenerované statické stránky, takže nevzniká žádné přepisování obsahu JavaScriptem ani CLS. `/voo` má `noindex` a není v sitemapě, aby nekonkurovala úvodní stránce ve vyhledávání.
 
@@ -94,12 +103,20 @@ Studený placený provoz z Meta na mobilu, lead magnet zdarma z oblasti financí
 | Krok funnelu | Odhad |
 |---|---|
 | Návštěva → scroll za hero (`section_view: trust`) | 55–65 % |
-| → interakce s kalkulačkou nebo filtrem (`calc_interact`, `filter_change`) | 25–35 % |
-| → začátek vyplňování (`form_start`) | 12–18 % |
-| → **odeslání formuláře (`generate_lead`)** | **8–12 %**, plánovací hodnota **9 %** |
-| → potvrzení double opt-in | 70–80 % leadů |
+| → interakce s kalkulačkou nebo filtrem (`calc_interact`, `filter_change`) | 20–30 % |
+| → začátek vyplňování (`form_start`) | 10–14 % |
+| → **odeslání formuláře (`generate_lead`)** | **5–10 %**, plánovací hodnota **7 %** |
 
-Zdůvodnění: medián konverze landing pages napříč obory je podle Unbounce Conversion Benchmark Report kolem 6–7 % a lead magnety zdarma s jedním polem mají výrazně vyšší konverzi než formuláře s více poli. Finance mají kvůli nedůvěře konverzi spíš nižší, mobilní provoz z reklamy také. Interaktivní prvek a jediné pole to kompenzují. Po prvních ~500 návštěvách se odhad nahradí skutečnými daty z funnelu.
+**Odkud číslo je:**
+
+1. **Výchozí bod:** podle [Unbounce Conversion Benchmark Report 2024](https://unbounce.com/conversion-benchmark-report/) je medián konverze landing pages napříč obory **6,6 %** a mobil konvertuje zhruba **o 8 % hůř** než desktop. Ve vzorku reportu tvoří mobil asi 83 % návštěv. Pro mobilní provoz z toho vychází ~6 %.
+2. **Proti nám:** studený provoz ze sociálních sítí a nedůvěra k finančním nabídkám.
+3. **Pro nás:**
+   - nabídka je zdarma a formulář má jediné pole,
+   - hodnota je vidět před žádostí o kontakt (kalkulačka, porovnání),
+   - formulář je na třech místech včetně sticky lišty.
+
+Plánovací hodnota je proto mírně nad mediánem: **7 %**. Po prvních ~500 návštěvách z každé reklamy se odhad nahradí skutečnými daty z funnelu (GA4) a z počtu uložených leadů.
 
 ---
 
@@ -164,7 +181,7 @@ Všechny události jdou přes [`src/scripts/track.ts`](src/scripts/track.ts) do 
 
 **Funnel v GA4 (Explore → Funnel exploration):** `lp_view` → `section_view (calculator|compare)` → `calc_interact | filter_change` → `form_start` → `form_submit` → `generate_lead`, rozpad podle `variant` a `placement`.
 
-**Server-side záloha:** každý lead se v `api/lead` zapíše s UTM a variantou (do Ecomailu, případně do logu funkce). Konverze se tak dá spárovat i bez souhlasu s cookies.
+**Server-side záznam:** každý lead se v `api/lead` uloží s UTM, variantou a umístěním formuláře do privátního Vercel Blob storu (a do Ecomailu nebo webhooku, pokud jsou nastavené). Počet leadů se tak dá spárovat s kampaní i bez souhlasu s cookies.
 
 **Cookies:** Google Consent Mode v2. Do souhlasu GA běží bez cookies, Meta Pixel se načte až po souhlasu. Lišta se souhlasem se zobrazí jen tehdy, když je nastavené `PUBLIC_GA_ID` nebo `PUBLIC_META_PIXEL_ID`.
 
@@ -183,8 +200,9 @@ Produkce (https://clientelo-b.vercel.app, Lighthouse 12, mobil): **Výkon 99 · 
 - Hashovaná aktiva s `immutable` cache, serif ve statických řezech (~23 kB) a bez preloadu, aby neblokoval první vykreslení.
 - Žádné obrázky v hero; vizuály jsou HTML/CSS a inline SVG.
 
-### Animace a mikrointerakce (bez knihoven, převážně čisté CSS)
-- **Reveal při scrollu:** CSS scroll-driven animace (`animation-timeline: view()`) s odstupňováním přes `--i`. Prohlížeče bez podpory zobrazí obsah rovnou. Nadpis v hero se neanimuje, aby se neoddálil LCP.
+### Animace a mikrointerakce (bez knihoven)
+- **Reveal při scrollu:** `IntersectionObserver` ([`src/scripts/reveal.ts`](src/scripts/reveal.ts)) spustí plynulý nájezd ve chvíli, kdy prvek dojede do viewportu. Prvky, které se objeví současně (řada karet), se odstupňují zleva doprava. Třídu `js-reveal` nastaví inline skript v `<head>` jen tam, kde to dává smysl. Pojistka: když se skript nenačte, obsah se po 3 s zobrazí. Nadpis v hero se neanimuje, aby se neoddálil LCP.
+- **`<number-stepper>`:** web komponenta pro číselné pole kalkulačky. Má vlastní šipky nahoru a dolů a při přidržení se hodnota posouvá se zrychlením. Hlídá meze (šipka na limitu se vypne) a změna hodnoty má jemnou animaci. Bez JS zůstává funkční nativní `<input type="number">`, z klávesnice ovládání šipkami.
 - **Filtrování fondů:** filtr je čisté CSS (`:has()`), změnu zabaluje View Transitions API (`view-transition-class: etf-card`). Karty plynule odjedou, přijedou a přeskupí se.
 - **FAQ:** plynulé otevírání i zavírání `<details>` přes `::details-content` a `interpolate-size: allow-keywords`.
 - **Tlačítka:** primární se zvedne a přejede přes něj lesk, sekundární se zespodu vyplní, šipky popojedou, při stisku se tlačítko zmáčkne. Hover je jen na zařízeních s myší (`@media (hover: hover)`).
@@ -208,9 +226,11 @@ Produkce (https://clientelo-b.vercel.app, Lighthouse 12, mobil): **Výkon 99 · 
 api/                 Vercel Function pro leady (+ sdílená logika pro dev server)
 scripts/             Astro integrace: /api/lead v lokálním dev serveru
 src/components/      sekce stránky (Hero, FeeCalculator, EtfCompare, LeadForm…)
-src/data/            etfs.json (data + zdroje), faq.ts
-src/scripts/         track.ts (měření), finance.ts (výpočty)
-src/pages/           / (A), /voo (B), /dekujeme, /ochrana-udaju, /tahak (zdroj PDF)
+src/data/            etfs.json (data + zdroje), faq.ts, ads.ts (reklamy)
+src/scripts/         track.ts (měření), reveal.ts (IntersectionObserver), finance.ts (výpočty)
+src/assets/reklamy/  vizuály reklam a náhledy první obrazovky (generuje `npm run og`)
+src/pages/           / (A), /voo (B), /dekujeme, /ochrana-udaju, /reklamy, /reklama/[id], /tahak (zdroj PDF)
+ai-log/              dokumentace práce s AI agenty
 static/              favicony, OG obrázek, PDF tahák (Astro publicDir)
 public/              ← hotový build (Astro outDir), dá se nahrát na libovolný hosting
 ```
@@ -225,27 +245,44 @@ npm run dev        # http://localhost:4321, formulář funguje i lokálně
 npm run build      # výstup do ./public
 npm run preview
 npm run pdf        # (při běžícím dev serveru) vygeneruje static/etf-tahak-2026.pdf ze stránky /tahak
-npm run og         # (při běžícím dev serveru) vygeneruje og.png, apple-touch-icon.png, favicon.ico
+npm run og         # (při běžícím dev serveru) vygeneruje og.png, ikony, vizuály reklam a náhledy první obrazovky
+npm run leads      # export leadů z Vercel Blob do CSV (potřebuje BLOB_READ_WRITE_TOKEN)
 ```
 
 ### Proměnné prostředí (Vercel → Settings → Environment Variables)
 
 | Proměnná | Účel |
 |---|---|
-| `ECOMAIL_API_KEY`, `ECOMAIL_LIST_ID` | zápis leadu do Ecomailu (double opt-in, autoresponder s PDF) |
+| `BLOB_STORE_ID` | **nastaveno.** Privátní Vercel Blob store `clientelo-b-leads` (Frankfurt), přidá ho Vercel při připojení storu; funkce se ověřuje přes OIDC |
+| `BLOB_READ_WRITE_TOKEN` | jen pro export leadů z lokálu (`npm run leads`) |
+| `ECOMAIL_API_KEY`, `ECOMAIL_LIST_ID` | volitelně: zápis leadu do Ecomailu (double opt-in, autoresponder s PDF) |
 | `LEAD_WEBHOOK_URL` | volitelně: kopie leadu do Make/Zapier/Google Sheets |
 | `PUBLIC_GA_ID` | GA4 Measurement ID (`G-…`) |
 | `PUBLIC_META_PIXEL_ID` | Meta Pixel ID |
 | `SITE_URL` | produkční URL (canonical, sitemap, OG) |
 
-Bez `ECOMAIL_*` i `LEAD_WEBHOOK_URL` se leady zapisují jen do logu funkce (Vercel → Logs), aby se žádný neztratil.
+Leady se ukládají do Blobu vždy, Ecomail a webhook jsou doplňkové kanály. Když selže jeden kanál, lead se neztratí; chyba se vrátí jen tehdy, když se lead neuloží nikam. Bez jakéhokoli úložiště (lokální vývoj) se lead zapíše do logu.
 
 ---
 
 ## 10. Před spuštěním reklamy (checklist)
 
+- [x] Ukládání leadů (privátní Vercel Blob) a export do CSV.
+- [x] Dvě verze reklamy a navázání první obrazovky ([/reklamy](https://clientelo-b.vercel.app/reklamy)).
 - [ ] Doplnit provozovatele (správce údajů) v `src/site.ts` a e-mail.
 - [ ] Nastavit `ECOMAIL_*` (nebo webhook) a autoresponder s PDF a výpočtem.
+- [ ] Otestovat na skutečném telefonu (iOS Safari, Android Chrome) včetně VoiceOver/TalkBack.
 - [ ] Nastavit `PUBLIC_GA_ID` a `PUBLIC_META_PIXEL_ID`, ověřit události v GA4 DebugView a Meta Events Manager.
 - [ ] Vlastní doména (`SITE_URL`) a ověření domény v Meta Business.
 - [ ] Právní kontrola textů (marketingové sdělení o investicích).
+
+---
+
+## 11. Práce s AI
+
+Projekt vznikl s AI agentem Claude Code. Podrobnosti jsou ve složce [`ai-log/`](ai-log/README.md):
+
+- [pokyny agentovi](ai-log/01-zadani-a-pokyny.md) v pořadí, jak šly, a co z nich vzniklo,
+- [zadání výzkumného subagenta](ai-log/02-subagent-data.md) pro sběr dat a jak se jeho výstup ověřil (subagent mimo jiné opravil můj mylný předpoklad o daňovém stropu 40 mil. Kč),
+- [kontrola výstupu](ai-log/03-kontrola-vystupu.md): automatické testy, Lighthouse a ruční průchody v prohlížeči,
+- [14 konkrétních chyb agenta](ai-log/04-chyby-agenta.md) s tím, jak se na ně přišlo, a commity s opravou.

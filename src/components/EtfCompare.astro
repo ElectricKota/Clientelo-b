@@ -127,7 +127,7 @@ const issuerHost = (url: string) => new URL(url).hostname.replace(/^www\./, '');
 
     <p class="mt-8 max-w-3xl text-sm text-ink-soft">
       Data podle emitentů fondů, evropské fondy podle justETF. Výnosy jsou průměrné roční celkové výnosy (včetně dividend) v USD z čisté hodnoty aktiv k
-      {fmt.date(data.asOf)}. Dividendový výnos je 30denní SEC yield; u fondů se znaménkem ≈ ho Vanguard neuvádí a jde o náš odhad z vyplacených dividend za 12
+      {fmt.date(data.asOf)}. Majetek fondu k 30. 9.–9. 10. 2026 podle emitenta, data stažena {fmt.date(data.dataRetrieved)}. Dividendový výnos je 30denní SEC yield; u fondů se znaménkem ≈ ho Vanguard neuvádí a jde o náš odhad z vyplacených dividend za 12
       měsíců. Poplatky jsou podle prospektu. Minulé výnosy nejsou zárukou budoucích a výnos v korunách ovlivňuje kurz USD/CZK.
     </p>
   </div>

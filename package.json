@@ -12,11 +12,13 @@
     "preview": "astro preview",
     "astro": "astro",
     "pdf": "node scripts/build-pdf.mjs",
-    "og": "node scripts/build-images.mjs"
+    "og": "node scripts/build-images.mjs",
+    "leads": "node scripts/export-leads.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
     "@tailwindcss/vite": "^4.3.3",
+    "@vercel/blob": "^2.8.1",
     "astro": "^7.3.8",
     "tailwindcss": "^4.3.3"
   },
