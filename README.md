@@ -296,4 +296,4 @@ Projekt vznikl s AI agentem Claude Code. Podrobnosti jsou ve složce [`ai-log/`]
 - [pokyny agentovi](ai-log/01-zadani-a-pokyny.md) v pořadí, jak šly, a co z nich vzniklo,
 - [zadání výzkumného subagenta](ai-log/02-subagent-data.md) pro sběr dat a jak se jeho výstup ověřil (subagent mimo jiné opravil můj mylný předpoklad o daňovém stropu 40 mil. Kč),
 - [kontrola výstupu](ai-log/03-kontrola-vystupu.md): automatické testy, Lighthouse a ruční průchody v prohlížeči,
-- [15 konkrétních chyb agenta](ai-log/04-chyby-agenta.md) s tím, jak se na ně přišlo, a commity s opravou.
+- [16 konkrétních chyb agenta](ai-log/04-chyby-agenta.md) s tím, jak se na ně přišlo, a commity s opravou.

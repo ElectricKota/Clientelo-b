@@ -19,10 +19,11 @@ Konkrétní případy, kdy výstup agenta nebyl správně. U každého je, jak s
 | 13 | **Formulář reálně neukládal leady:** bez Ecomailu skončily jen v logu funkce. README přitom popisovalo double opt-in, jako by fungoval. | Kontrola podle mého checklistu („formulář uloží lead“) | Privátní Vercel Blob + export do CSV, README upraveno na skutečný stav |
 | 14 | **Odhad konverze bez zdroje:** README uvádělo „Unbounce kolem 6–7 %“ bez odkazu a odhad 8–12 % byl spíš optimistický. | Kontrola podle checklistu, dohledání reportu | Odkaz na Unbounce CBR 2024 (medián 6,6 %, mobil ~8 % horší) a přepočítaný odhad |
 | 15 | **Reklamy bez hooku:** první verze reklam byly zmenšené výřezy z webu (graf, karta fondu, logo nahoře). Technicky v pořádku, ale nic, co by zastavilo scroll. | Moje hodnocení („reklamy jsou o ničem“). Agent to sám nepoznal, protože kontroloval rozměry a texty, ne účinek. | Nové koncepty Účtenka a Chat a hero A přepsané na hook reklamy |
+| 16 | **Výkonnostní regrese po nových reklamách:** účtenka v hero na mobilu měla úvodní animaci (skrytá ~1 s) a kreslení kroužku až ve 2,7 s, nadpis navíc tahal kurzívní řezy písma. Výkon klesl z 100 na 94, Speed Index na 4,5 s. | Lighthouse na produkci po nasazení a porovnání s `/voo` (bez účtenky: SI 2,8 s) | Úvodní animace a kreslení kroužku jen na desktopu, kurzíva v H1 až od `sm` → výkon 99–100, SI 1,0–1,5 s (`9750f99`, `bec3259` a následující commit) |
 
 ## Ponaučení pro další práci s agenty
 
-- **„Funguje to“ ověřovat chováním,** ne kompilací. Body 2, 9, 10 a 13 by bez kliknutí v prohlížeči nebo testu proti checklistu prošly.
+- **„Funguje to“ ověřovat chováním,** ne kompilací. Body 2, 9, 10, 13 a 16 by bez kliknutí v prohlížeči nebo testu proti checklistu prošly.
 - **Hromadné úpravy textu (`sed`) jsou rizikové.** Po každé je potřeba diff zkontrolovat (bod 5).
 - **Tvrzení o světě nechat ověřit samostatným krokem se zdrojem.** Subagent opravil i můj vlastní mylný předpoklad o daňovém stropu.
 - **Kvalitu kreativy agent sám neposoudí.** Kontroloval, že reklama „sedí“ (rozměry, texty, data), ne jestli zaujme. Kreativu je potřeba hodnotit člověkem, ideálně proti reálným datům z A/B testu (bod 15).
