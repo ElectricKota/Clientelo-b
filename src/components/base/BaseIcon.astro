@@ -1,0 +1,30 @@
+---
+// Sada liniových ikon (stroke = currentColor). Dekorativní, proto aria-hidden.
+const paths = {
+  'arrow-right': 'M4 10h11m0 0-4.5-4.5M15 10l-4.5 4.5',
+  'arrow-down': 'M10 3v14m0 0-5-5m5 5 5-5',
+  download: 'M10 3v10m0 0-4-4m4 4 4-4M4 16h12',
+  check: 'm5 10.5 3 3 7-7',
+  close: 'm6 6 8 8m0-8-8 8',
+  back: 'm12.5 4-6 6 6 6',
+  search: 'M8.5 15a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13Zm9 3-4.5-4.5',
+  calculator:
+    'M6 2.5h8a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-11a2 2 0 0 1 2-2ZM7 6.5h6M7 10h.01M10 10h.01M13 10h.01M7 13.5h.01M10 13.5h.01M13 13.5h.01',
+  document: 'M11.5 2.5H6a1.5 1.5 0 0 0-1.5 1.5v12A1.5 1.5 0 0 0 6 17.5h8a1.5 1.5 0 0 0 1.5-1.5V6.5ZM11.5 2.5v4h4M7.5 11h5M7.5 14h3',
+} as const;
+
+export type IconName = keyof typeof paths;
+
+interface Props {
+  name: IconName;
+  size?: number;
+  strokeWidth?: number;
+  class?: string;
+}
+
+const { name, size = 18, strokeWidth = 2, class: className } = Astro.props;
+---
+
+<svg aria-hidden="true" width={size} height={size} viewBox="0 0 20 20" fill="none" class={className}>
+  <path d={paths[name]} stroke="currentColor" stroke-width={strokeWidth} stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>

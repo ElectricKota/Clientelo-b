@@ -1,13 +1,16 @@
 ---
-import Base from '../layouts/Base.astro';
-import { site } from '../site';
-import { etfs } from '../data/etfs';
+import BaseIcon from '~/components/base/BaseIcon.astro';
+import DefaultLayout from '~/layouts/DefaultLayout.astro';
+import { appConfig } from '~/app.config';
+import { etfs } from '~/data/etfs';
+import LeadConfirmation from '~/components/lead/LeadConfirmation.astro';
+import BaseShareButton from '~/components/base/BaseShareButton.astro';
 
 const shareUrl = new URL('/', Astro.site).href;
 const shareText = 'Tohle mi pomohlo: porovnání ETF z NYSE a co si z nich koupíte z Česka.';
 ---
 
-<Base title={`Tahák je váš | ${site.brand}`} description="Děkujeme, ETF tahák si můžete stáhnout." noindex>
+<DefaultLayout title={`Tahák je váš | ${appConfig.brand}`} description="Děkujeme, ETF tahák si můžete stáhnout." noindex>
   <section data-section="thanks" aria-labelledby="thanks-title" class="py-10 sm:py-20">
     <div class="container-page max-w-3xl">
       <p class="eyebrow">Hotovo</p>
@@ -17,22 +20,17 @@ const shareText = 'Tohle mi pomohlo: porovnání ETF z NYSE a co si z nich koup�
       </p>
 
       <a
-        href={site.pdfPath}
+        href={appConfig.pdfPath}
         download
         class="btn btn-primary mt-8 w-full sm:w-auto"
         data-track="pdf_download"
         data-placement="thanks"
       >
-        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M10 3v10m0 0-4-4m4 4 4-4M4 16h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-        </svg>
+        <BaseIcon name="download" size={20} />
         Stáhnout ETF tahák (PDF, 8 stran)
       </a>
 
-      <div data-calc-summary hidden class="card mt-10 p-6">
-        <h2 class="font-sans text-lg font-semibold">Váš výpočet</h2>
-        <p class="mt-2 text-ink-soft" data-calc-text></p>
-      </div>
+      <LeadConfirmation />
 
       <div class="mt-12">
         <h2 class="text-2xl sm:text-3xl">Co teď?</h2>
@@ -67,7 +65,7 @@ const shareText = 'Tohle mi pomohlo: porovnání ETF z NYSE a co si z nich koup�
         <h2 class="font-sans text-lg font-semibold">Znáte někoho, kdo s ETF začíná?</h2>
         <p class="mt-1 text-ink-soft">Pošlete mu odkaz, tahák dostane také zdarma.</p>
         <div class="mt-4 flex flex-wrap gap-3">
-          <button type="button" class="btn btn-secondary hidden min-h-11 px-5 text-sm" data-share>Sdílet odkaz</button>
+          <BaseShareButton url={shareUrl} text={shareText} />
           <a
             class="btn btn-secondary min-h-11 px-5 text-sm"
             href={`https://wa.me/?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}`}
@@ -90,42 +88,4 @@ const shareText = 'Tohle mi pomohlo: porovnání ETF z NYSE a co si z nich koup�
       <p class="mt-10"><a href="/" class="link">← Zpět na porovnání ETF</a></p>
     </div>
   </section>
-</Base>
-
-<script define:vars={{ shareUrl, shareText }}>
-  window.__share = { url: shareUrl, text: shareText };
-</script>
-
-<script>
-  import { track } from '../scripts/track';
-
-  // Konverzi počítáme jen jednou a jen po skutečném odeslání formuláře (ne při ručním otevření URL).
-  try {
-    const lead = JSON.parse(sessionStorage.getItem('lead') ?? 'null');
-    if (lead && !sessionStorage.getItem('lead_tracked')) {
-      track('generate_lead', { placement: lead.placement });
-      sessionStorage.setItem('lead_tracked', '1');
-    }
-
-    const calc = JSON.parse(sessionStorage.getItem('calc') ?? 'null');
-    if (calc) {
-      const czk = (v: number) => `${new Intl.NumberFormat('cs-CZ').format(v)} Kč`;
-      const box = document.querySelector<HTMLElement>('[data-calc-summary]')!;
-      box.querySelector('[data-calc-text]')!.textContent =
-        `Při vkladu ${czk(calc.amount)} a ${czk(calc.monthly)} měsíčně za ${calc.years} let ušetří nejlevnější ETF oproti dražšímu fondu zhruba ${czk(calc.diff)} na poplatcích (modelový výpočet).`;
-      box.hidden = false;
-    }
-  } catch {}
-
-  const shareButton = document.querySelector<HTMLButtonElement>('[data-share]');
-  const share = (window as any).__share;
-  if (shareButton && navigator.share) {
-    shareButton.classList.remove('hidden');
-    shareButton.addEventListener('click', async () => {
-      try {
-        await navigator.share({ url: share.url, text: share.text });
-        track('share', { label: 'native' });
-      } catch {}
-    });
-  }
-</script>
+</DefaultLayout>

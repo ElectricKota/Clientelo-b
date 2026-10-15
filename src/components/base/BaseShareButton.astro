@@ -1,0 +1,18 @@
+---
+// Tlačítko nativního sdílení. Zobrazí se jen v prohlížečích s Web Share API.
+interface Props {
+  url: string;
+  text: string;
+  label?: string;
+}
+
+const { url, text, label = 'Sdílet odkaz' } = Astro.props;
+---
+
+<share-button hidden data-url={url} data-text={text}>
+  <button type="button" class="btn btn-secondary min-h-11 px-5 text-sm">{label}</button>
+</share-button>
+
+<script>
+  import '~/scripts/elements/share-button';
+</script>

@@ -1,0 +1,42 @@
+---
+import { etfData, etfs, shortIssuerName } from '~/data/etfs';
+import { format } from '~/utils/format';
+import { appConfig } from '~/app.config';
+
+const sources = [
+  ...new Map(etfs.map((e) => [new URL(e.sourceUrl).hostname, { label: shortIssuerName(e.issuer), url: e.sourceUrl }])).values(),
+  { label: 'justETF (UCITS fondy)', url: 'https://www.justetf.com/cz/' },
+];
+---
+
+<footer class="border-t border-line bg-paper pt-12 pb-28 text-sm text-ink-soft sm:pb-12">
+  <div class="container-page grid gap-10 md:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+    <div class="space-y-4">
+      <p class="font-serif text-lg text-pine">{appConfig.brand}</p>
+      <p>
+        <strong class="text-ink">Upozornění:</strong> Obsah má pouze informační charakter a není investičním doporučením ani nabídkou. Investování na kapitálovém
+        trhu nese riziko ztráty, hodnota investice může klesat i růst a minulé výnosy nejsou zárukou budoucích. Výnosy fondů jsou uvedeny v USD; výnos v korunách
+        ovlivňuje kurz USD/CZK. Před nákupem si přečtěte sdělení klíčových informací (KID) konkrétního fondu.
+      </p>
+      <p>
+        Výnosy k {format.date(etfData.asOf)}, data stažena {format.date(etfData.dataRetrieved)}. Provozovatel: {appConfig.operator.name}, <a class="link" href={`mailto:${appConfig.operator.email}`}>{appConfig.operator.email}</a>.
+      </p>
+      <p><a class="link" href="/ochrana-udaju">Ochrana osobních údajů a cookies</a></p>
+    </div>
+    <div>
+      <p class="font-semibold text-ink">Zdroje dat</p>
+      <ul class="mt-3 space-y-1">
+        {
+          sources.map((s) => (
+            <li>
+              <a href={s.url} class="link inline-flex min-h-6 items-center" rel="noopener" target="_blank">
+                {s.label}
+                <span class="sr-only"> (otevře se v novém okně)</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</footer>

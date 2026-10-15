@@ -1,0 +1,33 @@
+---
+// Layout pro stránky, které se jen renderují do obrázku nebo PDF (OG obrázek, reklamy, PDF tahák).
+// Bez hlavičky, patičky a měření; volitelně pevný rozměr plátna.
+import { Font } from 'astro:assets';
+import '~/assets/css/main.css';
+
+interface Props {
+  title: string;
+  /** Pevná šířka a výška plátna v px (OG obrázek, reklamy). */
+  width?: number;
+  height?: number;
+  bodyClass?: string;
+}
+
+const { title, width, height, bodyClass } = Astro.props;
+const canvasCss = width && height ? `html,body{margin:0;width:${width}px;height:${height}px;overflow:hidden}` : '';
+---
+
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <title>{title}</title>
+    <Font cssVariable="--font-geist" />
+    <Font cssVariable="--font-newsreader" />
+    {canvasCss && <style is:inline set:html={canvasCss} />}
+    <slot name="head" />
+  </head>
+  <body class={bodyClass}>
+    <slot />
+  </body>
+</html>

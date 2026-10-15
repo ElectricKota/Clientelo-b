@@ -1,0 +1,18 @@
+---
+// Lišta pro mobil: zobrazí se po opuštění hero sekce a zmizí, když je formulář na obrazovce.
+---
+
+<sticky-cta class="pointer-events-none fixed inset-x-0 bottom-0 z-30 block p-3 sm:hidden">
+  <div
+    data-bar
+    class="on-dark pointer-events-auto flex translate-y-[130%] items-center gap-3 rounded-full bg-pine/95 py-2 pr-2 pl-5 text-white shadow-2xl backdrop-blur transition-transform duration-300 data-[shown]:translate-y-0"
+    inert
+  >
+    <p class="flex-1 text-sm leading-tight font-semibold">ETF tahák 2026<span class="block font-normal text-white/75">PDF zdarma</span></p>
+    <a href="#guide" class="btn btn-primary min-h-11 px-5 text-sm" data-track="cta_click" data-placement="sticky" data-label="form">Chci tahák</a>
+  </div>
+</sticky-cta>
+
+<script>
+  import '~/scripts/elements/sticky-cta';
+</script>

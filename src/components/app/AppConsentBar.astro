@@ -1,0 +1,25 @@
+---
+import { appConfig } from '~/app.config';
+
+const { gaId, metaPixelId } = appConfig.analytics;
+---
+
+<consent-bar hidden data-ga-id={gaId} data-meta-pixel-id={metaPixelId}>
+  <section
+    aria-label="Souhlas s cookies"
+    class="fixed inset-x-3 bottom-3 z-40 mx-auto max-w-xl rounded-2xl border border-line bg-surface p-4 shadow-(--shadow-card) sm:p-5"
+  >
+    <p class="text-sm text-ink-soft">
+      Pro měření návštěvnosti a vyhodnocení reklam bychom rádi použili cookies (Google Analytics{metaPixelId && ', Meta'}).
+      Bez souhlasu stránka funguje stejně. <a class="link" href="/ochrana-udaju#cookies">Podrobnosti</a>
+    </p>
+    <div class="mt-3 flex flex-wrap gap-2">
+      <button type="button" class="btn btn-secondary min-h-11 px-5 py-2 text-sm" data-consent="denied">Odmítnout</button>
+      <button type="button" class="btn btn-secondary min-h-11 px-5 py-2 text-sm" data-consent="granted">Přijmout</button>
+    </div>
+  </section>
+</consent-bar>
+
+<script>
+  import '~/scripts/elements/consent-bar';
+</script>

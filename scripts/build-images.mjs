@@ -1,5 +1,5 @@
 // Vygeneruje OG obrázek (static/og.png), ikony (apple-touch-icon.png, favicon.ico),
-// vizuály reklam a náhledy první obrazovky stránky (src/assets/reklamy/) pomocí headless Chrome.
+// vizuály reklam a náhledy první obrazovky stránky (src/assets/ads/) pomocí headless Chrome.
 // Použití: běžící `npm run dev`, pak `npm run og`.
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync, mkdtempSync, mkdirSync } from 'node:fs';
@@ -19,11 +19,11 @@ const shot = (url, out, w, h, scale = 1) =>
 shot(`${base}/og`, join(root, 'og.png'), 1200, 630);
 
 // Reklamní vizuály (rozměry pro Meta: feed 4:5, stories 9:16) a první obrazovka obou variant na mobilu.
-const ads = new URL('../src/assets/reklamy/', import.meta.url).pathname;
-mkdirSync(ads, { recursive: true });
+const adsDir = new URL('../src/assets/ads/', import.meta.url).pathname;
+mkdirSync(adsDir, { recursive: true });
 for (const v of ['a', 'b']) {
-  shot(`${base}/reklama/${v}-feed`, join(ads, `${v}-feed.png`), 1080, 1350);
-  shot(`${base}/reklama/${v}-story`, join(ads, `${v}-story.png`), 1080, 1920);
+  shot(`${base}/reklama/${v}-feed`, join(adsDir, `${v}-feed.png`), 1080, 1350);
+  shot(`${base}/reklama/${v}-story`, join(adsDir, `${v}-story.png`), 1080, 1920);
 }
 // Headless Chrome nejde zúžit pod ~500 px, mobil proto simulujeme iframem 390 px uprostřed okna
 // a výsledek ořízneme (sips ořezává od středu).
@@ -31,7 +31,7 @@ const frameTmp = mkdtempSync(join(tmpdir(), 'lp-'));
 for (const [name, path] of [['lp-a', '/'], ['lp-b', '/voo']]) {
   const html = join(frameTmp, `${name}.html`);
   writeFileSync(html, `<html><body style="margin:0"><iframe src="${base}${path}" style="border:0;width:390px;height:844px;display:block;margin-left:105px"></iframe></body></html>`);
-  const out = join(ads, `${name}.png`);
+  const out = join(adsDir, `${name}.png`);
   shot(`file://${html}`, out, 600, 844, 2);
   execFileSync('sips', ['-c', '1688', '780', out], { stdio: 'ignore' });
 }
@@ -58,4 +58,4 @@ header.writeUInt16LE(32, 12);
 header.writeUInt32LE(png.length, 14);
 header.writeUInt32LE(22, 18);
 writeFileSync(join(root, 'favicon.ico'), Buffer.concat([header, png]));
-console.log('OG obrázek, ikony a vizuály reklam uloženy (static/, src/assets/reklamy/)');
+console.log('OG obrázek, ikony a vizuály reklam uloženy (static/, src/assets/ads/)');

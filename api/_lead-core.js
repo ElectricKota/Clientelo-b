@@ -91,7 +91,7 @@ function respond(request, status, payload) {
     return Response.json(payload, { status });
   }
   // Fallback bez JavaScriptu: klasický redirect.
-  const location = payload.ok ? payload.redirect : '/?chyba=email#formular';
+  const location = payload.ok ? payload.redirect : '/?error=email#guide';
   return new Response(null, { status: 303, headers: { Location: location } });
 }
 

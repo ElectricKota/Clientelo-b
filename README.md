@@ -57,7 +57,7 @@ Navíc **osobní výpočet z kalkulačky** do e-mailu a **čtvrtletní aktualiza
 
 ## 2. Dvě verze reklamy (Meta: Facebook + Instagram)
 
-Hotové vizuály ve formátech feed 4:5 (1080 × 1350) a stories 9:16 (1080 × 1920), texty, cílení a URL s UTM jsou na stránce **[/reklamy](https://clientelo-b.vercel.app/reklamy)**. Tam je u každé reklamy i první obrazovka stránky na mobilu. Vizuály se renderují z [`src/pages/reklama/[id].astro`](src/pages/reklama/[id].astro) příkazem `npm run og` do `src/assets/reklamy/`. Texty a cílení jsou v [`src/data/ads.ts`](src/data/ads.ts).
+Hotové vizuály ve formátech feed 4:5 (1080 × 1350) a stories 9:16 (1080 × 1920), texty, cílení a URL s UTM jsou na stránce **[/reklamy](https://clientelo-b.vercel.app/reklamy)**. Tam je u každé reklamy i první obrazovka stránky na mobilu. Vizuály se renderují z [`src/pages/reklama/[id].astro`](src/pages/reklama/[id].astro) příkazem `npm run og` do `src/assets/ads/`. Kreativy jsou komponenty [`AdCreativeReceipt`](src/components/ad/AdCreativeReceipt.astro) a [`AdCreativeChat`](src/components/ad/AdCreativeChat.astro). Texty a cílení jsou v [`src/data/ads.ts`](src/data/ads.ts).
 
 **Cílení:** Česko, 25–40 let, primárně mobil. Zájmy: investování, ETF, osobní finance a publikum podobné brokerům. Cíl kampaně: Leady (událost `Lead`).
 
@@ -82,7 +82,7 @@ Hotové vizuály ve formátech feed 4:5 (1080 × 1350) a stories 9:16 (1080 × 1
 
 - **A:**
   - H1 je doslova hook reklamy: „331 205 Kč za 20 let. *A ani o tom nevíte.*“
-  - Pod nadpisem je **stejná účtenka** (komponenta [`Receipt.astro`](src/components/Receipt.astro) sdílená s reklamou).
+  - Pod nadpisem je **stejná účtenka** (komponenta [`EtfReceipt`](src/components/etf/EtfReceipt.astro) sdílená s reklamou).
   - Hlavní tlačítko má stejný text jako reklama („Spočítat svou účtenku“) a vede do kalkulačky.
 - **B:**
   - H1 odpovídá na otázku z chatu: „VOO si z Česka nekoupíte. *Tohle ano.*“
@@ -171,12 +171,12 @@ Data jsou v [`src/data/etfs.json`](src/data/etfs.json). Ke každému fondu je uv
 
 ## 7. Měření celé cesty
 
-Všechny události jdou přes [`src/scripts/track.ts`](src/scripts/track.ts) do `dataLayer`/GA4 (a `Lead` do Meta Pixelu). Každá nese `variant`. V dev režimu nebo s `?debug` se vypisují do konzole.
+Všechny události jdou přes composable [`useTracking`](src/scripts/composables/useTracking.ts) do `dataLayer`/GA4 (a `Lead` do Meta Pixelu). Každá nese `variant`. V dev režimu nebo s `?debug` se vypisují do konzole.
 
 | Událost | Kdy | Parametry |
 |---|---|---|
 | `lp_view` | načtení stránky | `path`, UTM, `fbclid`/`gclid` |
-| `section_view` | sekce dorazí do středu obrazovky | `section` (hero, trust, calculator, compare, offer, method, faq) |
+| `section_view` | sekce dorazí do středu obrazovky | `section` (hero, trust, calculator, compare, guide, method, faq) |
 | `scroll_depth` | 25 / 50 / 75 / 100 % | `percent` |
 | `cta_click` | jakékoli CTA | `placement` (hero, header, card, sticky), `label` |
 | `calc_interact` | první změna v kalkulačce | `field` |
@@ -212,7 +212,7 @@ Produkce (https://clientelo-b.vercel.app, Lighthouse 12, mobil): **Výkon 99 · 
 - Žádné obrázky v hero; vizuály jsou HTML/CSS a inline SVG.
 
 ### Animace a mikrointerakce (bez knihoven)
-- **Reveal při scrollu:** `IntersectionObserver` ([`src/scripts/reveal.ts`](src/scripts/reveal.ts)) spustí plynulý nájezd ve chvíli, kdy prvek dojede do viewportu. Prvky, které se objeví současně (řada karet), se odstupňují zleva doprava. Třídu `js-reveal` nastaví inline skript v `<head>` jen tam, kde to dává smysl. Pojistka: když se skript nenačte, obsah se po 3 s zobrazí. Nadpis v hero se neanimuje, aby se neoddálil LCP.
+- **Reveal při scrollu:** `IntersectionObserver` (plugin [`reveal.client.ts`](src/scripts/plugins/reveal.client.ts)) spustí plynulý nájezd ve chvíli, kdy prvek dojede do viewportu. Prvky, které se objeví současně (řada karet), se odstupňují zleva doprava. Třídu `js-reveal` nastaví inline skript v `<head>` jen tam, kde to dává smysl. Pojistka: když se skript nenačte, obsah se po 3 s zobrazí. Nadpis v hero se neanimuje, aby se neoddálil LCP.
 - **`<number-stepper>`:** web komponenta pro číselné pole kalkulačky. Má vlastní šipky nahoru a dolů a při přidržení se hodnota posouvá se zrychlením. Hlídá meze (šipka na limitu se vypne) a změna hodnoty má jemnou animaci. Bez JS zůstává funkční nativní `<input type="number">`, z klávesnice ovládání šipkami.
 - **Filtrování fondů:** filtr je čisté CSS (`:has()`), změnu zabaluje View Transitions API (`view-transition-class: etf-card`). Karty plynule odjedou, přijedou a přeskupí se.
 - **FAQ:** plynulé otevírání i zavírání `<details>` přes `::details-content` a `interpolate-size: allow-keywords`.
@@ -231,20 +231,40 @@ Produkce (https://clientelo-b.vercel.app, Lighthouse 12, mobil): **Výkon 99 · 
 ### SEO
 `title`/`description`, canonical, Open Graph, JSON-LD (`WebPage`, `Dataset`, `FAQPage`), sitemap, `robots.txt`, `noindex` na děkovné stránce.
 
-### Struktura
+### Struktura (inspirovaná Nuxtem)
+
+Komponenty jsou rozdělené do složek podle role a pojmenované s prefixem složky (`AppHeader`, `SectionHero`, `BaseIcon`…), stejně jako v Nuxtu. Importuje se přes alias `~/` → `src/`. Všechen klientský JavaScript je na jednom místě v `src/scripts/` a šablony ho jen importují (`<script>import '~/scripts/elements/lead-form'</script>`). Inline zůstaly jen skripty, které musí běžet před prvním vykreslením (Consent Mode, pojistka revealu) nebo které Astro vyžaduje (JSON-LD).
 
 ```
-api/                 Vercel Function pro leady (+ sdílená logika pro dev server)
-scripts/             Astro integrace: /api/lead v lokálním dev serveru
-src/components/      sekce stránky (Hero, FeeCalculator, EtfCompare, LeadForm…)
-src/data/            etfs.json (data + zdroje), faq.ts, ads.ts (reklamy)
-src/scripts/         track.ts (měření), reveal.ts (IntersectionObserver), finance.ts (výpočty)
-src/assets/reklamy/  vizuály reklam a náhledy první obrazovky (generuje `npm run og`)
-src/pages/           / (A), /voo (B), /dekujeme, /ochrana-udaju, /reklamy, /reklama/[id], /tahak (zdroj PDF)
-ai-log/              dokumentace práce s AI agenty
-static/              favicony, OG obrázek, PDF tahák (Astro publicDir)
-public/              ← hotový build (Astro outDir), dá se nahrát na libovolný hosting
+api/                         Vercel Functions (příjem leadů, sdílená logika i pro dev server)
+integrations/                Astro integrace: /api/lead v lokálním dev serveru
+scripts/                     CLI nástroje: build-pdf, build-images (OG, ikony, reklamy), export-leads
+src/
+  app.config.ts              značka, provozovatel, analytika (obdoba app.config v Nuxtu)
+  assets/css/main.css        Tailwind, design tokeny, animace
+  assets/ads/                vizuály reklam a náhledy první obrazovky (generuje `npm run og`)
+  components/
+    app/                     AppHead, AppHeader, AppFooter, AppLogo, AppConsentBar, AppStickyCta
+    section/                 SectionHero, SectionTrust, SectionCalculator, SectionComparison, SectionGuide, SectionMethod, SectionFaq
+    etf/                     EtfCard, EtfReceipt
+    lead/                    LeadForm, LeadConfirmation
+    base/                    BaseIcon, BaseNumberStepper, BaseShareButton
+    ad/                      AdCreativeReceipt, AdCreativeChat, AdFeedPreview, AdShowcase
+    landing/                 LandingPage (skládá sekce pro varianty A a B)
+  data/                      etfs.json (data + zdroje), etfs.ts (typy, kategorie), faq.ts, ads.ts
+  layouts/                   DefaultLayout (web), RenderLayout (OG obrázek, reklamy, PDF)
+  pages/                     / (A), /voo (B), /dekujeme, /ochrana-udaju, /reklamy, /reklama/[id], /tahak, /og
+  scripts/                   veškerý klientský JS
+    composables/             useTracking, useReveal
+    plugins/                 tracking.client, reveal.client (globální inicializace z layoutu)
+    elements/                custom elementy: fee-calculator, etf-comparison, lead-form, lead-confirmation,
+                             number-stepper, share-button, sticky-cta, consent-bar
+  utils/                     finance (výpočty), format (čísla a data v češtině)
+static/                      favicony, OG obrázek, PDF tahák (Astro publicDir)
+public/                      ← hotový build (Astro outDir), dá se nahrát na libovolný hosting
 ```
+
+Názvy souborů v `pages/` jsou české, protože určují veřejné URL (`/dekujeme`, `/ochrana-udaju`) pro české návštěvníky. Kód, komponenty, proměnné i HTML kotvy (`#calculator`, `#comparison`, `#guide`) jsou anglicky.
 
 ---
 
@@ -280,7 +300,7 @@ Leady se ukládají do Blobu vždy, Ecomail a webhook jsou doplňkové kanály. 
 
 - [x] Ukládání leadů (privátní Vercel Blob) a export do CSV.
 - [x] Dvě verze reklamy a navázání první obrazovky ([/reklamy](https://clientelo-b.vercel.app/reklamy)).
-- [ ] Doplnit provozovatele (správce údajů) v `src/site.ts` a e-mail.
+- [ ] Doplnit provozovatele (správce údajů) v [`src/app.config.ts`](src/app.config.ts) a e-mail.
 - [ ] Nastavit `ECOMAIL_*` (nebo webhook) a autoresponder s PDF a výpočtem.
 - [ ] Otestovat na skutečném telefonu (iOS Safari, Android Chrome) včetně VoiceOver/TalkBack.
 - [ ] Nastavit `PUBLIC_GA_ID` a `PUBLIC_META_PIXEL_ID`, ověřit události v GA4 DebugView a Meta Events Manager.
@@ -296,4 +316,4 @@ Projekt vznikl s AI agentem Claude Code. Podrobnosti jsou ve složce [`ai-log/`]
 - [pokyny agentovi](ai-log/01-zadani-a-pokyny.md) v pořadí, jak šly, a co z nich vzniklo,
 - [zadání výzkumného subagenta](ai-log/02-subagent-data.md) pro sběr dat a jak se jeho výstup ověřil (subagent mimo jiné opravil můj mylný předpoklad o daňovém stropu 40 mil. Kč),
 - [kontrola výstupu](ai-log/03-kontrola-vystupu.md): automatické testy, Lighthouse a ruční průchody v prohlížeči,
-- [16 konkrétních chyb agenta](ai-log/04-chyby-agenta.md) s tím, jak se na ně přišlo, a commity s opravou.
+- [17 konkrétních chyb agenta](ai-log/04-chyby-agenta.md) s tím, jak se na ně přišlo, a commity s opravou.

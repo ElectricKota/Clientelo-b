@@ -1,0 +1,14 @@
+---
+import { appConfig } from '~/app.config';
+import AppLogo from '~/components/app/AppLogo.astro';
+---
+
+<a href="#main" class="sr-only-focusable fixed top-3 left-3 z-50 rounded-full bg-pine px-5 py-3 font-semibold text-white">Přeskočit na obsah</a>
+
+<header class="container-page flex items-center justify-between gap-4 py-4 sm:py-6">
+  <a href="/" class="flex items-center gap-2 rounded-md font-serif text-xl font-semibold text-pine no-underline" aria-label={`${appConfig.brand}, úvodní stránka`}>
+    <AppLogo />
+    {appConfig.brand}
+  </a>
+  <slot />
+</header>

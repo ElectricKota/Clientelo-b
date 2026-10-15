@@ -72,8 +72,8 @@ export const ads: Ad[] = [
   },
 ];
 
-export function adUrl(ad: Ad, site: URL | string) {
-  const url = new URL(ad.landingPath, site);
+export function buildAdUrl(ad: Ad, siteUrl: URL | string) {
+  const url = new URL(ad.landingPath, siteUrl);
   url.searchParams.set('utm_source', campaign.source);
   url.searchParams.set('utm_medium', campaign.medium);
   url.searchParams.set('utm_campaign', campaign.name);

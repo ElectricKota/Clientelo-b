@@ -64,3 +64,15 @@ Diagnóza původních reklam podle agenta:
 - nadpis byl konstatování bez napětí a chyběla emoce.
 
 Nové koncepty: **A „Účtenka“** (hook „331 205 Kč za 20 let. A ani o tom nevíte.“) a **B „Chat“** (nativní konverzace „Proč mi broker nenajde VOO?“). Hero varianty A agent přepsal tak, aby opakovala hook i účtenku z reklamy.
+
+## 7. Struktura kódu
+
+> Procházím tu strukturu, a skripty prosím na jedno místo a importovat do šablon, takto je to nepřehledné (samozřejmě ne ty, co jsou nutné pro Astro). Hezky komponentově. A názvy komponent i proměnných vždy anglicky, vezmi si inspiraci z Nuxtu.
+
+**Výstup:**
+- Klientský JS je celý v `src/scripts/`: `elements/` (custom elementy), `plugins/` (globální inicializace), `composables/` (`useTracking`, `useReveal`). Šablony ho jen importují. Inline zůstaly jen skripty, které musí běžet před prvním vykreslením.
+- Komponenty jsou ve složkách s prefixem podle Nuxtu (`app/AppHeader`, `section/SectionHero`, `base/BaseIcon`, `etf/EtfCard`…), alias `~/` místo relativních cest, `app.config.ts`, `layouts/DefaultLayout` a `RenderLayout`.
+- Nově vytažené komponenty: `AppHead`, `AppHeader`, `AppLogo` (logo bylo zkopírované na 5 místech), `BaseIcon` (opakované SVG), `EtfCard`, `LeadConfirmation`, `BaseShareButton`, `AdCreativeReceipt`, `AdCreativeChat`, `AdFeedPreview`, `AdShowcase`.
+- Proměnné, kotvy a ID jsou anglicky (`#calculator`, `#comparison`, `#guide`, `format`, `calculatorDefaults`…). Soubory v `pages/` zůstaly česky, protože určují veřejné URL.
+- **Kontrola:** text všech stránek před a po refaktoru je slovo od slova shodný. Agent prošel v prohlížeči kalkulačku, stepper, filtr, formulář a děkovnou stránku. JS na úvodní stránce narostl o ~300 B gzip.
+

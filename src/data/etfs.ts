@@ -45,8 +45,8 @@ export interface Fact {
   sourceUrl: string;
 }
 
-export const data = raw as unknown as { asOf: string; dataRetrieved: string; etfs: Etf[]; facts: Fact[]; notes: string[] };
-export const etfs = data.etfs;
+export const etfData = raw as unknown as { asOf: string; dataRetrieved: string; etfs: Etf[]; facts: Fact[]; notes: string[] };
+export const etfs = etfData.etfs;
 
 export const categories: { id: Category; label: string }[] = [
   { id: 'sp500', label: 'S&P 500' },
@@ -58,19 +58,8 @@ export const categories: { id: Category; label: string }[] = [
   { id: 'gold', label: 'Zlato' },
 ];
 
-const czNumber = (digits = 2) => new Intl.NumberFormat('cs-CZ', { minimumFractionDigits: digits, maximumFractionDigits: digits });
-
-export const fmt = {
-  pct: (value: number | null, digits = 2) => (value === null ? '–' : `${czNumber(digits).format(value)} %`),
-  ter: (value: number) => `${new Intl.NumberFormat('cs-CZ', { minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(value)} %`,
-  czk: (value: number) => `${new Intl.NumberFormat('cs-CZ', { maximumFractionDigits: 0 }).format(Math.round(value))} Kč`,
-  usdBn: (value: number | null) =>
-    value === null ? '–' : `${new Intl.NumberFormat('cs-CZ', { maximumFractionDigits: value >= 1e11 ? 0 : 1 }).format(value / 1e9)} mld. USD`,
-  date: (iso: string) => new Intl.DateTimeFormat('cs-CZ', { day: 'numeric', month: 'numeric', year: 'numeric' }).format(new Date(iso)),
-};
-
 /** Krátký název emitenta pro zobrazení (State Street, iShares, Vanguard, Schwab). */
-export function issuerShort(issuer: string) {
+export function shortIssuerName(issuer: string) {
   if (/state street/i.test(issuer)) return 'State Street';
   if (/ishares|blackrock/i.test(issuer)) return 'iShares';
   if (/vanguard/i.test(issuer)) return 'Vanguard';
@@ -78,14 +67,13 @@ export function issuerShort(issuer: string) {
   return issuer;
 }
 
-export const policyLabel = (p: Ucits['policy']) => ({ accumulating: 'akumulační', distributing: 'distribuční', none: 'bez výplat' })[p];
+export const distributionPolicyLabel = (policy: Ucits['policy']) => ({ accumulating: 'akumulační', distributing: 'distribuční', none: 'bez výplat' })[policy];
 
-export function fact(id: string) {
-  const found = data.facts.find((f) => f.id === id);
+export function getFact(id: string) {
+  const found = etfData.facts.find((fact) => fact.id === id);
   if (!found) throw new Error(`Chybí fakt "${id}" v etfs.json`);
   return found;
 }
 
-export { futureValue, feeCost } from '../scripts/finance';
-
-export const calcDefaults = { initial: 100_000, monthly: 3_000, years: 20, annualReturn: 7, customTer: 1.5 };
+/** Výchozí hodnoty kalkulačky (sdílí je hero, reklamy, PDF i kalkulačka). */
+export const calculatorDefaults = { initial: 100_000, monthly: 3_000, years: 20, annualReturn: 7, customTer: 1.5 };

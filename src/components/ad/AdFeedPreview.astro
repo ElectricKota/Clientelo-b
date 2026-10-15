@@ -1,0 +1,36 @@
+---
+// Náhled reklamy tak, jak by vypadala ve feedu sociální sítě (obecný vzhled, bez značky platformy).
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { appConfig } from '~/app.config';
+import type { Ad } from '~/data/ads';
+import AppLogo from '~/components/app/AppLogo.astro';
+
+interface Props {
+  ad: Ad;
+  feedImage: ImageMetadata;
+}
+
+const { ad, feedImage } = Astro.props;
+const host = new URL(Astro.site!).host.toUpperCase();
+---
+
+<figure class="reveal card overflow-hidden" aria-label={`Náhled reklamy ${ad.id.toUpperCase()} ve feedu`}>
+  <div class="flex items-center gap-3 p-4">
+    <AppLogo size={40} shape="round" />
+    <div class="leading-tight">
+      <p class="font-semibold">{appConfig.brand}</p>
+      <p class="text-xs text-ink-soft">Sponzorováno</p>
+    </div>
+  </div>
+  <p class="px-4 pb-4 text-[0.95rem] leading-relaxed whitespace-pre-line">{ad.primaryText}</p>
+  <Image src={feedImage} alt={`Vizuál reklamy ${ad.id.toUpperCase()} ve formátu 4:5`} widths={[400, 640, 1080]} sizes="(min-width: 1280px) 540px, (min-width: 768px) 50vw, 100vw" class="w-full" loading="lazy" />
+  <div class="flex items-center justify-between gap-4 bg-sand/70 p-4">
+    <div class="min-w-0">
+      <p class="truncate text-xs text-ink-soft">{host}</p>
+      <p class="truncate font-semibold">{ad.headline}</p>
+      <p class="truncate text-sm text-ink-soft">{ad.description}</p>
+    </div>
+    <span class="shrink-0 rounded-lg bg-line px-4 py-2 text-sm font-semibold">{ad.cta}</span>
+  </div>
+</figure>

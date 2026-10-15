@@ -1,38 +1,28 @@
 ---
 // Předloha OG obrázku 1200×630 (sdílení na sítích). Generuje se skriptem `npm run og`.
-import { Font } from 'astro:assets';
-import '../styles/global.css';
-import { etfs, fmt, data } from '../data/etfs';
-const pairs = ['VOO', 'SPY', 'VT', 'SCHD'].map((t) => etfs.find((e) => e.ticker === t)!);
+import RenderLayout from '~/layouts/RenderLayout.astro';
+import { etfs, etfData } from '~/data/etfs';
+import { format } from '~/utils/format';
+const featuredEtfs = ['VOO', 'SPY', 'VT', 'SCHD'].map((ticker) => etfs.find((etf) => etf.ticker === ticker)!);
 ---
 
-<!doctype html>
-<html lang="cs">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="robots" content="noindex" />
-    <title>OG</title>
-    <Font cssVariable="--font-geist" />
-    <Font cssVariable="--font-newsreader" />
-  </head>
-  <body class="m-0 h-[630px] w-[1200px] overflow-hidden">
+<RenderLayout title="OG" width={1200} height={630}>
     <div class="flex h-full items-center gap-14 bg-paper px-20">
       <div class="flex-1">
-        <p class="text-xl font-semibold tracking-wide text-brick uppercase">ETF tahák · data k {fmt.date(data.asOf)}</p>
+        <p class="text-xl font-semibold tracking-wide text-brick uppercase">ETF tahák · data k {format.date(etfData.asOf)}</p>
         <h1 class="mt-5 font-serif text-[76px] leading-[1.02] font-medium">VOO si z Česka nekoupíte. <em class="text-brick">Tohle ano.</em></h1>
         <p class="mt-6 text-2xl text-ink-soft">10 ETF z NYSE, jejich evropská dvojčata a kalkulačka poplatků.</p>
       </div>
       <ul class="w-[330px] space-y-3">
         {
-          pairs.map((e) => (
+          featuredEtfs.map((etf) => (
             <li class="card flex items-center justify-between px-6 py-4 text-2xl">
-              <span class="font-serif text-pine">{e.ticker}</span>
+              <span class="font-serif text-pine">{etf.ticker}</span>
               <span class="text-ink-soft">→</span>
-              <span class="font-semibold text-gain">{e.ucits[0].primary}</span>
+              <span class="font-semibold text-gain">{etf.ucits[0].primary}</span>
             </li>
           ))
         }
       </ul>
     </div>
-  </body>
-</html>
+</RenderLayout>

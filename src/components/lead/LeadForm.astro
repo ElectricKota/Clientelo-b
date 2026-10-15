@@ -1,0 +1,64 @@
+---
+import BaseIcon from '~/components/base/BaseIcon.astro';
+interface Props {
+  /** Kde formulář na stránce je (pro měření). */
+  placement: string;
+  button?: string;
+  /** Tmavá varianta na tmavém pozadí. */
+  tone?: 'light' | 'dark';
+  class?: string;
+}
+
+const { placement, button = 'Poslat tahák zdarma', tone = 'light', class: className } = Astro.props;
+const id = `lf-${placement}`;
+const dark = tone === 'dark';
+---
+
+<lead-form data-placement={placement} class:list={['block', className]}>
+  <form action="/api/lead" method="post" class="w-full">
+    <label for={`${id}-email`} class:list={['mb-2 block text-sm font-semibold', dark ? 'text-white' : 'text-pine']}>
+      Váš e-mail
+    </label>
+    <div class="flex flex-col gap-3 sm:flex-row">
+      <input
+        id={`${id}-email`}
+        name="email"
+        type="email"
+        required
+        autocomplete="email"
+        inputmode="email"
+        autocapitalize="off"
+        spellcheck="false"
+        placeholder="jmeno@email.cz"
+        aria-describedby={`${id}-error ${id}-hint`}
+        class:list={[
+          'min-h-13 w-full flex-1 rounded-full border-2 bg-white px-5 text-base text-ink placeholder:text-ink-soft/70',
+          'aria-[invalid=true]:border-brick focus-visible:border-focus',
+          dark ? 'border-transparent' : 'border-line',
+        ]}
+      />
+      <button type="submit" class="btn btn-primary min-h-13 shrink-0 px-7" data-label={button}>
+        {button}
+        <BaseIcon name="arrow-right" size={18} />
+      </button>
+    </div>
+
+    <p id={`${id}-error`} class:list={['mt-2 min-h-0 text-sm font-semibold empty:hidden', dark ? 'text-[#ffc9ad]' : 'text-brick']} aria-live="assertive"></p>
+
+    <p id={`${id}-hint`} class:list={['mt-3 text-sm', dark ? 'text-white/80' : 'text-ink-soft']}>
+      PDF stáhnete hned po odeslání. Jednou za čtvrtletí pošleme aktualizovaná data, odhlásíte se jedním kliknutím.
+      <a href="/ochrana-udaju" class:list={['underline underline-offset-4', dark ? 'text-white' : 'text-pine']}>Jak chráníme vaše údaje</a>
+    </p>
+
+    <input type="hidden" name="placement" value={placement} />
+    <input type="hidden" name="variant" value="" />
+    <input type="hidden" name="ts" value="" />
+    <div aria-hidden="true" class="absolute -left-[9999px] h-px w-px overflow-hidden">
+      <label>Nevyplňujte <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+    </div>
+  </form>
+</lead-form>
+
+<script>
+  import '~/scripts/elements/lead-form';
+</script>

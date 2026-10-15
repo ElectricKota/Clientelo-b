@@ -1,0 +1,19 @@
+---
+// Značka ETF tahák (piktogram). Varianta `inverted` je pro tmavé pozadí, `round` pro avatar.
+interface Props {
+  size?: number;
+  tone?: 'default' | 'inverted';
+  shape?: 'square' | 'round';
+  class?: string;
+}
+
+const { size = 28, tone = 'default', shape = 'square', class: className } = Astro.props;
+const background = tone === 'inverted' ? '#f7f4ee' : '#0f3d36';
+const stroke = tone === 'inverted' ? '#0f3d36' : '#f7f4ee';
+---
+
+<svg aria-hidden="true" width={size} height={size} viewBox="0 0 32 32" class={className}>
+  <rect width="32" height="32" rx={shape === 'round' ? 16 : 8} fill={background}></rect>
+  <path d="M8 21.5 13.5 16l4 3.5L24 11" fill="none" stroke={stroke} stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path>
+  {shape === 'square' && <circle cx="24" cy="11" r="2.4" fill="#e9895c"></circle>}
+</svg>

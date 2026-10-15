@@ -1,11 +1,12 @@
 ---
 // Tisková předloha PDF taháku. PDF se generuje skriptem `npm run pdf` (headless Chrome) do static/.
-import { Font } from 'astro:assets';
-import '../styles/global.css';
-import { data, etfs, fmt, fact, feeCost, categories } from '../data/etfs';
-import { site } from '../site';
+import RenderLayout from '~/layouts/RenderLayout.astro';
+import { etfData, etfs, getFact, categories } from '~/data/etfs';
+import { feeCost } from '~/utils/finance';
+import { format } from '~/utils/format';
+import { appConfig } from '~/app.config';
 
-const policy = (p: 'accumulating' | 'distributing' | 'none') => ({ accumulating: 'Acc', distributing: 'Dist', none: '–' })[p];
+const shareClassLabel = (policy: 'accumulating' | 'distributing' | 'none') => ({ accumulating: 'Acc', distributing: 'Dist', none: '–' })[policy];
 const scenarios = [
   { initial: 0, monthly: 2_000, years: 20 },
   { initial: 100_000, monthly: 5_000, years: 20 },
@@ -19,91 +20,13 @@ const funds = [
   })),
   { label: 'Fond s TER 1,5 %', ter: 1.5 },
 ];
-const pages = 8;
+const pageCount = 8;
 ---
 
-<!doctype html>
-<html lang="cs">
-  <head>
-    <meta charset="utf-8" />
-    <title>ETF tahák 2026</title>
-    <meta name="robots" content="noindex" />
-    <Font cssVariable="--font-geist" />
-    <Font cssVariable="--font-newsreader" />
-    <style is:global>
-      @page {
-        size: A4;
-        margin: 0;
-      }
-      html,
-      body {
-        background: #f7f4ee;
-        font-size: 10.5pt;
-        line-height: 1.5;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-      .page {
-        width: 210mm;
-        height: 297mm;
-        padding: 18mm 18mm 16mm;
-        position: relative;
-        overflow: hidden;
-        break-after: page;
-        display: flex;
-        flex-direction: column;
-      }
-      .page:last-child {
-        break-after: auto;
-      }
-      .foot {
-        margin-top: auto;
-        display: flex;
-        justify-content: space-between;
-        font-size: 8pt;
-        color: #4a5b57;
-        border-top: 1px solid #e0d9cc;
-        padding-top: 4mm;
-      }
-      table {
-        border-collapse: collapse;
-        width: 100%;
-      }
-      th,
-      td {
-        text-align: left;
-        padding: 2.2mm 2mm;
-        border-bottom: 1px solid #e0d9cc;
-        vertical-align: top;
-      }
-      th {
-        font-weight: 500;
-        color: #4a5b57;
-        font-size: 8.5pt;
-      }
-      .compact th,
-      .compact td {
-        padding: 1.2mm 1.5mm;
-      }
-      .compact th {
-        font-size: 7.5pt;
-      }
-      h2 {
-        font-size: 24pt;
-        line-height: 1.1;
-      }
-      h3 {
-        font-family: var(--font-sans);
-        font-weight: 600;
-        font-size: 11.5pt;
-        color: #10302b;
-      }
-    </style>
-  </head>
-  <body class="num">
+<RenderLayout title="ETF tahák 2026" bodyClass="num">
     <!-- 1: titulní strana -->
     <section class="page bg-pine text-white">
-      <p class="text-sm font-semibold tracking-wide text-[#f4b393] uppercase">{site.brand} · data k {fmt.date(data.asOf)}</p>
+      <p class="text-sm font-semibold tracking-wide text-[#f4b393] uppercase">{appConfig.brand} · data k {format.date(etfData.asOf)}</p>
       <h1 class="mt-[40mm] font-serif text-[46pt] leading-[1.02] font-medium text-white">ETF tahák 2026</h1>
       <p class="mt-6 max-w-[140mm] font-serif text-[18pt] leading-snug text-white/90">
         {etfs.length} nejpopulárnějších ETF z NYSE a co si z nich jako investor z Česka opravdu koupíte.
@@ -116,14 +39,14 @@ const pages = 8;
         <li>7 · Daně a 5 drahých chyb</li>
         <li>8 · Zdroje a upozornění</li>
       </ol>
-      <div class="foot border-white/20 text-white/70"><span>{site.brand}</span><span>1 / {pages}</span></div>
+      <div class="foot border-white/20 text-white/70"><span>{appConfig.brand}</span><span>1 / {pageCount}</span></div>
     </section>
 
     <!-- 2: PRIIPs -->
     <section class="page">
       <p class="eyebrow">Než začnete</p>
       <h2 class="mt-2">Proč VOO u brokera nenajdete</h2>
-      <p class="mt-6 text-[12pt]">{fact('priips-kid').text_cs}</p>
+      <p class="mt-6 text-[12pt]">{getFact('priips-kid').text_cs}</p>
       <div class="mt-8 grid grid-cols-2 gap-6">
         <div class="rounded-xl border border-line bg-white p-5">
           <h3>ETF registrované v USA</h3>
@@ -144,7 +67,7 @@ const pages = 8;
         Akumulační třída dividendy automaticky reinvestuje uvnitř fondu. Neplatíte z nich daň v ČR a nemusíte je znovu investovat. Distribuční třída dividendy vyplácí na
         účet; ty pak podléhají dani z příjmu.
       </p>
-      <div class="foot"><span>{site.brand} 2026</span><span>2 / {pages}</span></div>
+      <div class="foot"><span>{appConfig.brand} 2026</span><span>2 / {pageCount}</span></div>
     </section>
 
     <!-- 3–4: převodník -->
@@ -162,7 +85,7 @@ const pages = 8;
                     <span class="text-ink-soft">{e.name}</span>
                   </p>
                   <p class="shrink-0 text-ink-soft">
-                    TER {fmt.ter(e.ter)} · {categories.find((c) => c.id === e.category)?.label}
+                    TER {format.ter(e.ter)} · {categories.find((c) => c.id === e.category)?.label}
                   </p>
                 </div>
                 <table class="compact mt-1 text-[8pt] leading-snug">
@@ -185,8 +108,8 @@ const pages = 8;
                           </span>
                         </td>
                         <td class="font-mono text-[8.5pt]">{u.isin}</td>
-                        <td>{fmt.ter(u.ter)}</td>
-                        <td>{policy(u.policy)}</td>
+                        <td>{format.ter(u.ter)}</td>
+                        <td>{shareClassLabel(u.policy)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -195,9 +118,9 @@ const pages = 8;
             ))}
           </div>
           <div class="foot">
-            <span>Data k {fmt.date(data.asOf)}, zdroje na straně 8</span>
+            <span>Data k {format.date(etfData.asOf)}, zdroje na straně 8</span>
             <span>
-              {i + 3} / {pages}
+              {i + 3} / {pageCount}
             </span>
           </div>
         </section>
@@ -235,7 +158,7 @@ const pages = 8;
           neuvádíme.
         </p>
       </div>
-      <div class="foot"><span>{site.brand} 2026</span><span>5 / {pages}</span></div>
+      <div class="foot"><span>{appConfig.brand} 2026</span><span>5 / {pageCount}</span></div>
     </section>
 
     <!-- 6: poplatky -->
@@ -251,7 +174,7 @@ const pages = 8;
           <tr>
             <th>Fond</th>
             <th>TER</th>
-            {scenarios.map((s) => <th class="text-right">{fmt.czk(s.initial)} + {fmt.czk(s.monthly)}/měs., {s.years} let</th>)}
+            {scenarios.map((s) => <th class="text-right">{format.czk(s.initial)} + {format.czk(s.monthly)}/měs., {s.years} let</th>)}
           </tr>
         </thead>
         <tbody>
@@ -259,9 +182,9 @@ const pages = 8;
             funds.map((f) => (
               <tr>
                 <td class="font-semibold">{f.label}</td>
-                <td>{fmt.ter(f.ter)}</td>
+                <td>{format.ter(f.ter)}</td>
                 {scenarios.map((s) => (
-                  <td class="text-right">{fmt.czk(feeCost({ ...s, annualReturn: 7, ter: f.ter }))}</td>
+                  <td class="text-right">{format.czk(feeCost({ ...s, annualReturn: 7, ter: f.ter }))}</td>
                 ))}
               </tr>
             ))
@@ -280,7 +203,7 @@ const pages = 8;
           <p class="mt-1 text-ink-soft">V sdělení klíčových informací (KID) jako „průběžné náklady“, případně na stránce fondu u emitenta.</p>
         </div>
       </div>
-      <div class="foot"><span>Spočítejte si vlastní čísla na webu</span><span>6 / {pages}</span></div>
+      <div class="foot"><span>Spočítejte si vlastní čísla na webu</span><span>6 / {pageCount}</span></div>
     </section>
 
     <!-- 7: daně a chyby -->
@@ -290,14 +213,14 @@ const pages = 8;
       <div class="mt-5 space-y-4">
         <div>
           <h3>Při prodeji</h3>
-          <p class="mt-1 text-ink-soft">{fact('time-test-3y').text_cs}</p>
-          <p class="mt-1 text-ink-soft">{fact('value-test-100k').text_cs}</p>
-          <p class="mt-1 text-ink-soft">{fact('cap-40m-abolished').text_cs}</p>
+          <p class="mt-1 text-ink-soft">{getFact('time-test-3y').text_cs}</p>
+          <p class="mt-1 text-ink-soft">{getFact('value-test-100k').text_cs}</p>
+          <p class="mt-1 text-ink-soft">{getFact('cap-40m-abolished').text_cs}</p>
         </div>
         <div>
           <h3>Dividendy</h3>
-          <p class="mt-1 text-ink-soft">{fact('w8ben-withholding').text_cs}</p>
-          <p class="mt-1 text-ink-soft">{fact('irish-ucits-15').text_cs}</p>
+          <p class="mt-1 text-ink-soft">{getFact('w8ben-withholding').text_cs}</p>
+          <p class="mt-1 text-ink-soft">{getFact('irish-ucits-15').text_cs}</p>
         </div>
       </div>
       <h2 class="mt-10">5 drahých chyb začátečníků</h2>
@@ -319,7 +242,7 @@ const pages = 8;
           ))
         }
       </ol>
-      <div class="foot"><span>Toto není daňové poradenství. Při nejasnostech se obraťte na daňového poradce.</span><span>7 / {pages}</span></div>
+      <div class="foot"><span>Toto není daňové poradenství. Při nejasnostech se obraťte na daňového poradce.</span><span>7 / {pageCount}</span></div>
     </section>
 
     <!-- 8: zdroje -->
@@ -334,7 +257,7 @@ const pages = 8;
             </li>
           ))
         }
-        {data.facts.map((f) => <li>{f.sourceUrl}</li>)}
+        {etfData.facts.map((f) => <li>{f.sourceUrl}</li>)}
         <li>UCITS fondy: justetf.com</li>
       </ul>
       <div class="mt-8 rounded-xl border border-line bg-white p-5 text-ink-soft">
@@ -342,11 +265,80 @@ const pages = 8;
         <p class="mt-2">
           Tento materiál má pouze informační charakter a není investičním doporučením, nabídkou ani daňovým poradenstvím. Investování nese riziko ztráty, hodnota
           investice může klesat i růst a minulé výnosy nejsou zárukou budoucích. Výnosy amerických fondů jsou v USD a výsledek v korunách ovlivňuje kurz. Před nákupem
-          si přečtěte KID konkrétního fondu. Data k {fmt.date(data.asOf)}.
+          si přečtěte KID konkrétního fondu. Data k {format.date(etfData.asOf)}.
         </p>
       </div>
       <p class="mt-8 font-serif text-xl text-pine">Další aktualizaci dat vám pošleme e-mailem po konci čtvrtletí.</p>
-      <div class="foot"><span>{site.brand} 2026</span><span>8 / {pages}</span></div>
+      <div class="foot"><span>{appConfig.brand} 2026</span><span>8 / {pageCount}</span></div>
     </section>
-  </body>
-</html>
+</RenderLayout>
+
+<style is:global>
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  html,
+  body {
+    background: #f7f4ee;
+    font-size: 10.5pt;
+    line-height: 1.5;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .page {
+    width: 210mm;
+    height: 297mm;
+    padding: 18mm 18mm 16mm;
+    position: relative;
+    overflow: hidden;
+    break-after: page;
+    display: flex;
+    flex-direction: column;
+  }
+  .page:last-child {
+    break-after: auto;
+  }
+  .foot {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    font-size: 8pt;
+    color: #4a5b57;
+    border-top: 1px solid #e0d9cc;
+    padding-top: 4mm;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 2.2mm 2mm;
+    border-bottom: 1px solid #e0d9cc;
+    vertical-align: top;
+  }
+  th {
+    font-weight: 500;
+    color: #4a5b57;
+    font-size: 8.5pt;
+  }
+  .compact th,
+  .compact td {
+    padding: 1.2mm 1.5mm;
+  }
+  .compact th {
+    font-size: 7.5pt;
+  }
+  h2 {
+    font-size: 24pt;
+    line-height: 1.1;
+  }
+  h3 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 11.5pt;
+    color: #10302b;
+  }
+</style>

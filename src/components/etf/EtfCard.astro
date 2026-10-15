@@ -1,0 +1,92 @@
+---
+// Karta jednoho ETF z NYSE: poplatek, velikost, výnos, evropské (UCITS) obdoby a zdroj dat.
+import { categories, distributionPolicyLabel, type Etf } from '~/data/etfs';
+import { format } from '~/utils/format';
+
+interface Props {
+  etf: Etf;
+}
+
+const { etf } = Astro.props;
+const categoryLabel = categories.find((category) => category.id === etf.category)?.label;
+const sourceHost = new URL(etf.sourceUrl).hostname.replace(/^www\./, '');
+---
+
+<article class="card card-hover flex h-full flex-col p-6" aria-labelledby={`etf-${etf.ticker}`}>
+  <header class="flex items-start justify-between gap-3">
+    <div>
+      <h3 id={`etf-${etf.ticker}`} class="font-serif text-3xl leading-none">
+        {etf.ticker}
+      </h3>
+      <p class="mt-2 text-sm text-ink-soft">
+        {etf.name}
+        {etf.formerTicker && ` (dříve ${etf.formerTicker})`}
+      </p>
+    </div>
+    <span class="shrink-0 rounded-full bg-sand px-3 py-1 text-xs font-semibold">{categoryLabel}</span>
+  </header>
+
+  <dl class="num mt-5 grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+    <div>
+      <dt class="text-ink-soft">
+        <abbr title="Celková roční nákladovost fondu" class="no-underline">
+          TER
+        </abbr>{' '}
+        ročně
+      </dt>
+      <dd class="text-base font-semibold">{format.ter(etf.ter)}</dd>
+    </div>
+    <div>
+      <dt class="text-ink-soft">Majetek fondu</dt>
+      <dd class="text-base font-semibold">{format.usdBillions(etf.aumUsd)}</dd>
+    </div>
+    <div>
+      <dt class="text-ink-soft">Výnos 5 let (p. a.)</dt>
+      <dd class="text-base font-semibold">{format.percent(etf.returns.y5)}</dd>
+    </div>
+    <div>
+      <dt class="text-ink-soft">{etf.category === 'gold' ? 'Výnos 10 let (p. a.)' : 'Dividendový výnos'}</dt>
+      <dd class="text-base font-semibold">{etf.category === 'gold' ? format.percent(etf.returns.y10) : `${etf.yield.estimate ? '≈ ' : ''}${format.percent(etf.yield.value)}`}</dd>
+    </div>
+  </dl>
+
+  <div class="mt-5 rounded-2xl bg-mint/70 p-4">
+    <p class="text-xs font-semibold tracking-wide text-gain uppercase">Z Česka koupíte</p>
+    <ul class="mt-2 space-y-2">
+      {etf.ucits.map((ucits) => (
+        <li class="text-sm">
+          <span class="font-semibold text-ink">{ucits.ticker}</span>
+          <span class="num text-ink-soft">
+            {' '}
+            · TER {format.ter(ucits.ter)} · {distributionPolicyLabel(ucits.policy)}
+          </span>
+          <span class="block text-xs text-ink-soft">
+            {ucits.exactMatch ? '' : 'Nejbližší obdoba. '}
+            {ucits.note}
+          </span>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="mt-auto pt-5">
+    <a
+      href="#guide"
+      class="link inline-flex min-h-11 items-center gap-1 text-sm"
+      data-track="cta_click"
+      data-placement="card"
+      data-label={etf.ticker}
+    >
+      Jak ho najít u brokera a jak se daní<span aria-hidden="true" class="arrow ml-1">→</span>
+      <span class="sr-only">: {etf.ticker}</span>
+    </a>
+    <p class="mt-2 text-xs text-ink-soft">
+      Zdroj:{' '}
+      <a href={etf.sourceUrl} class="inline-flex min-h-6 items-center underline underline-offset-2" rel="noopener" target="_blank">
+        {sourceHost}
+        <span class="sr-only"> (otevře se v novém okně)</span>
+      </a>
+      , výnosy k {format.date(etf.returns.asOf)}
+    </p>
+  </div>
+</article>

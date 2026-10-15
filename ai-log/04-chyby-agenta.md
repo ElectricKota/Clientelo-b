@@ -20,6 +20,7 @@ Konkrétní případy, kdy výstup agenta nebyl správně. U každého je, jak s
 | 14 | **Odhad konverze bez zdroje:** README uvádělo „Unbounce kolem 6–7 %“ bez odkazu a odhad 8–12 % byl spíš optimistický. | Kontrola podle checklistu, dohledání reportu | Odkaz na Unbounce CBR 2024 (medián 6,6 %, mobil ~8 % horší) a přepočítaný odhad |
 | 15 | **Reklamy bez hooku:** první verze reklam byly zmenšené výřezy z webu (graf, karta fondu, logo nahoře). Technicky v pořádku, ale nic, co by zastavilo scroll. | Moje hodnocení („reklamy jsou o ničem“). Agent to sám nepoznal, protože kontroloval rozměry a texty, ne účinek. | Nové koncepty Účtenka a Chat a hero A přepsané na hook reklamy |
 | 16 | **Výkonnostní regrese po nových reklamách:** účtenka v hero na mobilu měla úvodní animaci (skrytá ~1 s) a kreslení kroužku až ve 2,7 s, nadpis navíc tahal kurzívní řezy písma. Výkon klesl z 100 na 94, Speed Index na 4,5 s. | Lighthouse na produkci po nasazení a porovnání s `/voo` (bez účtenky: SI 2,8 s) | Úvodní animace a kreslení kroužku jen na desktopu, kurzíva v H1 až od `sm` → výkon 99–100, SI 1,0–1,5 s (`9750f99`, `bec3259`, `5ee712b`) |
+| 17 | **Neošetřený timeout View Transition:** když prohlížeč přechod zrušil (neaktivní záložka), vznikl `Unhandled rejection: TimeoutError` a filtr se nemusel přepnout. Chyba tam byla od zavedení View Transitions. | Log dev serveru při testu po refaktoru | Zachycení zrušeného přechodu, filtr se pak přepne bez animace |
 
 ## Ponaučení pro další práci s agenty
 

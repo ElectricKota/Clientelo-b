@@ -1,0 +1,90 @@
+---
+// Obsah <head>: SEO a Open Graph, ikony, fonty, strukturovaná data a inline skripty,
+// které musí běžet ještě před vykreslením (reveal pojistka, Google Consent Mode).
+import { Font } from 'astro:assets';
+import { appConfig } from '~/app.config';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical: URL;
+  noindex: boolean;
+  jsonLd: Record<string, unknown>[];
+}
+
+const { title, description, canonical, noindex, jsonLd } = Astro.props;
+const ogImage = new URL('/og.png', Astro.site);
+const { gaId } = appConfig.analytics;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex, follow" />}
+<meta name="theme-color" content="#0f3d36" />
+<meta name="format-detection" content="telephone=no" />
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="cs_CZ" />
+<meta property="og:site_name" content={appConfig.brand} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<script is:inline>
+  // Reveal animace jen tam, kde má smysl. Pojistka: když se skript nenačte, obsah se po 3 s ukáže.
+  (function (root) {
+    if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    root.classList.add('js-reveal');
+    setTimeout(function () {
+      if (!window.__revealReady) root.classList.remove('js-reveal');
+    }, 3000);
+  })(document.documentElement);
+</script>
+
+<Font cssVariable="--font-geist" preload={[{ subset: 'latin', style: 'normal' }]} />
+<Font cssVariable="--font-newsreader" />
+
+{
+  gaId && (
+    <script is:inline define:vars={{ gaId }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      window.gtag = gtag;
+      // Consent Mode v2: do souhlasu bez cookies, jen anonymní pingy.
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        wait_for_update: 500,
+      });
+      try {
+        if (localStorage.getItem('consent') === 'granted') {
+          gtag('consent', 'update', {
+            ad_storage: 'granted',
+            ad_user_data: 'granted',
+            ad_personalization: 'granted',
+            analytics_storage: 'granted',
+          });
+        }
+      } catch {}
+      gtag('js', new Date());
+      gtag('config', gaId, { send_page_view: true });
+    </script>
+  )
+}
+
+{jsonLd.map((schema) => <script type="application/ld+json" set:html={JSON.stringify(schema)} />)}

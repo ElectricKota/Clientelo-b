@@ -1,0 +1,59 @@
+---
+// Výchozí layout stránek (obdoba layouts/default.vue v Nuxtu).
+import '~/assets/css/main.css';
+import { appConfig } from '~/app.config';
+import AppHead from '~/components/app/AppHead.astro';
+import AppHeader from '~/components/app/AppHeader.astro';
+import AppFooter from '~/components/app/AppFooter.astro';
+import AppConsentBar from '~/components/app/AppConsentBar.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Kanonická cesta (např. "/"), pokud se liší od aktuální URL. */
+  canonicalPath?: string;
+  noindex?: boolean;
+  /** Varianta stránky pro A/B a navázání na reklamu. */
+  variant?: string;
+  jsonLd?: Record<string, unknown>[];
+}
+
+const {
+  title = appConfig.title,
+  description = appConfig.description,
+  canonicalPath,
+  noindex = false,
+  variant = 'a',
+  jsonLd = [],
+} = Astro.props;
+
+// Build ve formátu `file` vrací /voo.html, Vercel (cleanUrls) ale servíruje /voo.
+const cleanPath = (canonicalPath ?? Astro.url.pathname).replace(/index\.html$/, '').replace(/\.html$/, '');
+const canonical = new URL(cleanPath, Astro.site);
+const hasTrackers = Boolean(appConfig.analytics.gaId || appConfig.analytics.metaPixelId);
+---
+
+<!doctype html>
+<html lang="cs" data-variant={variant}>
+  <head>
+    <AppHead title={title} description={description} canonical={canonical} noindex={noindex} jsonLd={jsonLd} />
+  </head>
+  <body class="min-h-dvh">
+    <AppHeader>
+      <slot name="header-actions" />
+    </AppHeader>
+
+    <main id="main" tabindex="-1" class="outline-none">
+      <slot />
+    </main>
+
+    <AppFooter />
+    <slot name="after-footer" />
+    {hasTrackers && <AppConsentBar />}
+
+    <script>
+      import '~/scripts/plugins/reveal.client';
+      import '~/scripts/plugins/tracking.client';
+    </script>
+  </body>
+</html>

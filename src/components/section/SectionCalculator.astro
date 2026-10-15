@@ -1,0 +1,174 @@
+---
+import { etfs, calculatorDefaults, shortIssuerName } from '~/data/etfs';
+import { feeCost, futureValue } from '~/utils/finance';
+import { format } from '~/utils/format';
+import LeadForm from '~/components/lead/LeadForm.astro';
+import BaseNumberStepper from '~/components/base/BaseNumberStepper.astro';
+
+// Porovnáváme fondy na stejný index (S&P 500): rozdíl ve výsledku dělá jen poplatek.
+const sp500 = etfs.filter((e) => e.category === 'sp500');
+const rows = [
+  ...sp500.map((e) => ({ id: e.ticker, label: e.ticker, sub: `${shortIssuerName(e.issuer)} · USA`, ter: e.ter, kind: 'us' })),
+  ...[...new Map(sp500.flatMap((e) => e.ucits).filter((u) => u.policy === 'accumulating').map((u) => [u.primary, u])).values()].map((u) => ({
+    id: u.primary,
+    label: u.primary,
+    sub: 'UCITS · Evropa',
+    ter: u.ter,
+    kind: 'ucits',
+  })),
+  { id: 'custom', label: 'Fond s vyšším poplatkem', sub: 'pro srovnání', ter: calculatorDefaults.customTer, kind: 'custom' },
+];
+
+const base = { initial: calculatorDefaults.initial, monthly: calculatorDefaults.monthly, years: calculatorDefaults.years, annualReturn: calculatorDefaults.annualReturn };
+const costs = rows.map((r) => ({ ...r, cost: feeCost({ ...base, ter: r.ter }) }));
+const maxCost = Math.max(...costs.map((r) => r.cost));
+const etfCosts = costs.filter((r) => r.kind !== 'custom');
+const cheapest = etfCosts.reduce((a, b) => (a.cost <= b.cost ? a : b));
+const priciest = etfCosts.reduce((a, b) => (a.cost >= b.cost ? a : b));
+const custom = costs.find((r) => r.kind === 'custom')!;
+const finalValue = futureValue({ ...base, ter: cheapest.ter });
+
+const fields = [
+  { name: 'initial', label: 'Jednorázový vklad', min: 0, max: 2_000_000, step: 10_000, value: calculatorDefaults.initial, unit: 'Kč' },
+  { name: 'monthly', label: 'Měsíčně investuji', min: 0, max: 30_000, step: 500, value: calculatorDefaults.monthly, unit: 'Kč' },
+  { name: 'years', label: 'Jak dlouho', min: 5, max: 40, step: 1, value: calculatorDefaults.years, unit: 'let' },
+];
+const yearsLabel = (n: number) => `${n} ${n === 1 ? 'rok' : n < 5 ? 'roky' : 'let'}`;
+const display = (f: (typeof fields)[number]) => (f.unit === 'Kč' ? format.czk(f.value) : yearsLabel(f.value));
+---
+
+<section id="calculator" data-section="calculator" aria-labelledby="calculator-title" class="scroll-mt-4 py-16 sm:py-24">
+  <div class="container-page">
+    <div class="reveal max-w-2xl">
+      <p class="eyebrow">Kalkulačka poplatků</p>
+      <h2 id="calculator-title" class="mt-3 text-3xl leading-tight sm:text-5xl">Stejný index, jiná cena. Kolik vás to bude stát?</h2>
+      <p class="mt-4 text-lg text-ink-soft">
+        Všechny fondy níže kopírují index S&amp;P 500. Rozdíl ve výsledku proto dělá jen roční poplatek (TER). Nastavte si vlastní čísla.
+      </p>
+    </div>
+
+    <fee-calculator class="mt-10 grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-8">
+      <form class="card reveal space-y-7 p-6 sm:p-8" aria-label="Parametry výpočtu" onsubmit="return false">
+        {
+          fields.map((f) => (
+            <div>
+              <div class="flex items-baseline justify-between gap-4">
+                <label for={`calc-${f.name}`} class="font-semibold text-pine">
+                  {f.label}
+                </label>
+                <output for={`calc-${f.name}`} data-out={f.name} class="num text-lg font-semibold text-ink">
+                  {display(f)}
+                </output>
+              </div>
+              <input
+                id={`calc-${f.name}`}
+                name={f.name}
+                type="range"
+                min={f.min}
+                max={f.max}
+                step={f.step}
+                value={f.value}
+                data-unit={f.unit}
+                aria-valuetext={display(f)}
+                class="mt-3 h-11 w-full cursor-pointer accent-pine"
+              />
+            </div>
+          ))
+        }
+
+        <fieldset>
+          <legend class="font-semibold text-pine">Předpokládaný roční výnos</legend>
+          <div class="mt-3 grid grid-cols-3 gap-2">
+            {
+              [5, 7, 9].map((r) => (
+                <label class="relative">
+                  <input type="radio" name="annualReturn" value={r} checked={r === calculatorDefaults.annualReturn} class="sr-only" />
+                  <span class="chip num">
+                    {r} %
+                  </span>
+                </label>
+              ))
+            }
+          </div>
+          <p class="mt-2 text-sm text-ink-soft">Před poplatky a daněmi. Jde o modelový výpočet, ne o slib výnosu.</p>
+        </fieldset>
+
+        <div>
+          <label for="calc-customTer" class="block font-semibold text-pine">Pro srovnání: fond s poplatkem<span class="sr-only"> (v procentech ročně)</span></label>
+          <BaseNumberStepper
+            id="calc-customTer"
+            name="customTer"
+            value={calculatorDefaults.customTer}
+            min={0}
+            max={5}
+            step={0.05}
+            unit="% ročně"
+            describedby="calc-customTer-hint"
+            class="mt-3"
+          />
+          <p id="calc-customTer-hint" class="mt-2 text-sm text-ink-soft">Poplatek (TER) svého fondu najdete v jeho sdělení klíčových informací (KID).</p>
+        </div>
+      </form>
+
+      <div class="card reveal flex flex-col p-6 sm:p-8">
+        <p class="sr-only" aria-live="polite" data-live></p>
+        <div>
+          <p class="text-ink-soft">
+            Za <span data-out="yearsText">{yearsLabel(calculatorDefaults.years)}</span> zaplatíte na poplatcích
+          </p>
+          <p class="num mt-1 font-serif text-3xl leading-tight text-pine sm:text-4xl">
+            od <strong data-out="min" class="font-semibold">{format.czk(cheapest.cost)}</strong> do <strong data-out="max" class="font-semibold">{format.czk(priciest.cost)}</strong>
+          </p>
+          <p class="mt-3 text-ink-soft">
+            S fondem za <span data-out="customTer" class="num">{format.ter(custom.ter)}</span> by to bylo
+            <strong data-out="custom" class="num font-semibold text-brick">{format.czk(custom.cost)}</strong>. Investice by v nejlevnějším ETF mohla narůst
+            zhruba na <strong data-out="final" class="num font-semibold text-ink">{format.czk(finalValue)}</strong>.
+          </p>
+        </div>
+
+        <ul class="mt-8 space-y-4" aria-label="Poplatky podle fondu">
+          {
+            costs.map((r) => (
+              <li data-row={r.id} data-ter={r.ter} style={`--w:${((r.cost / maxCost) * 100).toFixed(1)}%`}>
+                <div class="flex items-baseline justify-between gap-3 text-sm">
+                  <span>
+                    <strong class="text-base text-ink">{r.label}</strong>
+                    <span class="text-ink-soft">
+                      {' '}
+                      · {r.sub} · TER <span data-ter-label>{format.ter(r.ter)}</span>
+                    </span>
+                  </span>
+                  <span data-cost class="num shrink-0 font-semibold">
+                    {format.czk(r.cost)}
+                  </span>
+                </div>
+                <div class="mt-1.5 h-2.5 overflow-hidden rounded-full bg-sand" aria-hidden="true">
+                  <div
+                    class:list={[
+                      'h-full w-(--w) rounded-full transition-[width] duration-300',
+                      r.kind === 'custom' ? 'bg-brick' : r.kind === 'ucits' ? 'bg-gain' : 'bg-pine',
+                    ]}
+                  />
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+
+        <p class="mt-6 text-xs leading-relaxed text-ink-soft">
+          Modelový výpočet: měsíční úročení, poplatek odečten z ročního výnosu, bez daní, měnového kurzu USD/CZK a poplatků brokera. Minulé ani modelové
+          výnosy nejsou zárukou budoucích. TER fondů podle emitentů k uvedenému datu.
+        </p>
+
+        <div class="on-dark mt-8 rounded-2xl bg-pine p-5 text-white sm:p-6">
+          <p class="font-serif text-xl leading-snug text-white sm:text-2xl">Pošleme vám výpočet a tahák, kde tyhle ETF z Česka koupíte.</p>
+          <LeadForm placement="calculator" button="Poslat výpočet" tone="dark" class="mt-4" />
+        </div>
+      </div>
+    </fee-calculator>
+  </div>
+</section>
+
+<script>
+  import '~/scripts/elements/fee-calculator';
+</script>

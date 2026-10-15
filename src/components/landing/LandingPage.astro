@@ -1,0 +1,84 @@
+---
+import DefaultLayout from '~/layouts/DefaultLayout.astro';
+import SectionHero from '~/components/section/SectionHero.astro';
+import SectionTrust from '~/components/section/SectionTrust.astro';
+import SectionCalculator from '~/components/section/SectionCalculator.astro';
+import SectionComparison from '~/components/section/SectionComparison.astro';
+import SectionGuide from '~/components/section/SectionGuide.astro';
+import SectionMethod from '~/components/section/SectionMethod.astro';
+import SectionFaq from '~/components/section/SectionFaq.astro';
+import AppStickyCta from '~/components/app/AppStickyCta.astro';
+import { faq } from '~/data/faq';
+import { etfData, etfs } from '~/data/etfs';
+import { appConfig } from '~/app.config';
+
+interface Props {
+  variant: 'a' | 'b';
+  title?: string;
+  description?: string;
+}
+const { variant, title, description } = Astro.props;
+const url = new URL('/', Astro.site).href;
+// Varianta B je jen pro reklamu: vlastní canonical + noindex, aby nekonkurovala úvodní stránce ve vyhledávání.
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: title ?? appConfig.title,
+    description: description ?? appConfig.description,
+    url,
+    inLanguage: 'cs-CZ',
+    dateModified: etfData.asOf,
+    publisher: { '@type': 'Organization', name: appConfig.brand, url },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: 'Porovnání ETF z NYSE a jejich UCITS alternativ',
+    description: 'Poplatky (TER), velikost fondů, výnosy a evropské alternativy nejpopulárnějších ETF obchodovaných na NYSE.',
+    url,
+    dateModified: etfData.asOf,
+    creator: { '@type': 'Organization', name: appConfig.brand },
+    isBasedOn: [...new Set(etfs.map((e) => e.sourceUrl))],
+    license: 'https://creativecommons.org/licenses/by/4.0/',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((item) => ({ '@type': 'Question', name: item.question, acceptedAnswer: { '@type': 'Answer', text: item.answer } })),
+  },
+];
+---
+
+<DefaultLayout variant={variant} title={title} description={description} noindex={variant !== 'a'} jsonLd={jsonLd}>
+  <a
+    slot="header-actions"
+    href="#guide"
+    class="btn btn-secondary hidden min-h-11 px-5 py-2 text-sm sm:inline-flex"
+    data-track="cta_click"
+    data-placement="header"
+    data-label="form">Stáhnout tahák zdarma</a
+  >
+
+  <SectionHero variant={variant} />
+  <SectionTrust />
+  {
+    variant === 'a' ? (
+      <>
+        <SectionCalculator />
+        <SectionComparison />
+      </>
+    ) : (
+      <>
+        <SectionComparison />
+        <SectionCalculator />
+      </>
+    )
+  }
+  <SectionGuide />
+  <SectionMethod />
+  <SectionFaq />
+
+  <AppStickyCta slot="after-footer" />
+</DefaultLayout>

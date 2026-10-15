@@ -1,0 +1,18 @@
+---
+import { etfData, etfs, shortIssuerName } from '~/data/etfs';
+import { format } from '~/utils/format';
+
+const issuers = [...new Set(etfs.map((e) => shortIssuerName(e.issuer))), 'justETF'];
+---
+
+<section data-section="trust" aria-label="Odkud data jsou" class="border-y border-line bg-surface/60">
+  <div class="container-page flex flex-col gap-3 py-5 text-sm sm:flex-row sm:items-center sm:justify-between">
+    <p class="text-ink-soft">
+      <span class="font-semibold text-ink">Zdroje dat:</span>
+      {issuers.join(' · ')}
+    </p>
+    <p class="text-ink-soft">
+      Aktualizováno <time datetime={etfData.asOf} class="font-semibold text-ink">{format.date(etfData.asOf)}</time>, každé čtvrtletí
+    </p>
+  </div>
+</section>

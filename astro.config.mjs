@@ -2,7 +2,7 @@
 import { defineConfig, fontProviders } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
-import { leadDevApi } from './scripts/lead-dev-api.mjs';
+import { leadDevApi } from './integrations/lead-dev-api.mjs';
 
 const site = process.env.SITE_URL ?? 'https://clientelo-b.vercel.app';
 
